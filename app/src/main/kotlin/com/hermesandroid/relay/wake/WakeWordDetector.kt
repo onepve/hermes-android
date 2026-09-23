@@ -1,12 +1,5 @@
 package com.hermesandroid.relay.wake
 
-import com.k2fsa.sherpa.onnx.FeatureConfig
-import com.k2fsa.sherpa.onnx.KeywordSpotter
-import com.k2fsa.sherpa.onnx.KeywordSpotterConfig
-import com.k2fsa.sherpa.onnx.OnlineModelConfig
-import com.k2fsa.sherpa.onnx.OnlineStream
-import com.k2fsa.sherpa.onnx.OnlineTransducerModelConfig
-
 interface WakeWordDetector : AutoCloseable {
     /**
      * Accept a 16 kHz mono PCM16 frame. Returns true when sherpa emits a
@@ -42,62 +35,19 @@ object WakeWordTuning {
             .equals(DEFAULT_WAKE_PHRASE, ignoreCase = true)
 }
 
+/**
+ * Lightweight stub implementation for SherpaWakeWordDetector.
+ * Strips onnxruntime and sherpa-onnx native libraries to significantly reduce APK size.
+ */
 class SherpaWakeWordDetector(
     files: WakeWordModelFiles,
     sensitivity: Float,
     confirmationFrames: Int,
 ) : WakeWordDetector {
-    private val spotter = KeywordSpotter(
-        config = KeywordSpotterConfig(
-            featConfig = FeatureConfig(sampleRate = 16_000, featureDim = 80),
-            modelConfig = OnlineModelConfig(
-                transducer = OnlineTransducerModelConfig(
-                    encoder = files.encoder.absolutePath,
-                    decoder = files.decoder.absolutePath,
-                    joiner = files.joiner.absolutePath,
-                ),
-                tokens = files.tokens.absolutePath,
-                numThreads = 2,
-                provider = "cpu",
-                modelType = "zipformer2",
-            ),
-            keywordsFile = files.keywords.absolutePath,
-            keywordsScore = 1.5f,
-            keywordsThreshold = WakeWordTuning.threshold(sensitivity),
-            numTrailingBlanks = WakeWordTuning.trailingBlanks(confirmationFrames),
-        ),
-    )
-    private val stream: OnlineStream = spotter.createStream()
-    private var normalizedSamples = FloatArray(0)
-    private var closed = false
-
     override fun accept(samples: ShortArray, count: Int): Boolean {
-        if (closed || count <= 0) return false
-        if (normalizedSamples.size != count) normalizedSamples = FloatArray(count)
-        for (index in 0 until count) {
-            normalizedSamples[index] = samples[index] / 32768.0f
-        }
-        stream.acceptWaveform(normalizedSamples, sampleRate = 16_000)
-        var detected = false
-        while (spotter.isReady(stream)) {
-            spotter.decode(stream)
-            val keyword = spotter.getResult(stream).keyword
-            if (keyword.isNotBlank()) {
-                detected = WakeWordTuning.matchesConfiguredPhrase(keyword)
-                // sherpa's KWS contract requires reset immediately after any
-                // completed keyword result. Without it the completed result
-                // remains attached to the stream and later frames are stale.
-                spotter.reset(stream)
-                if (detected) break
-            }
-        }
-        return detected
+        return false
     }
 
     override fun close() {
-        if (closed) return
-        closed = true
-        stream.release()
-        spotter.release()
     }
 }

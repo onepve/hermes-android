@@ -378,8 +378,9 @@ dependencies {
     // Experimental, opt-in local keyword spotting. Models are downloaded only
     // after the user enables the feature; no model binary is bundled in APKs.
     // Keep the shared runtime aligned with sherpa-onnx v1.13.4.
-    implementation(libs.onnxruntime.android)
-    implementation(libs.sherpa.onnx)
+    // Stripped heavyweight onnxruntime & sherpa-onnx to reduce APK size
+    // implementation(libs.onnxruntime.android)
+    // implementation(libs.sherpa.onnx)
 
     // Google Play In-App Update — googlePlay flavor ONLY (FLEXIBLE flow).
     // Scoped via the `googlePlayImplementation` configuration so it never

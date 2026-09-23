@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
  *   don't want to sit on app startup waiting for a flaky connection.
  */
 object UpdateChecker {
-    private const val REPO_OWNER = "Codename-11"
+    private const val REPO_OWNER = "onepve"
     private const val REPO_NAME  = "hermes-relay"
     private const val RELEASES_URL =
         "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases?per_page=100"

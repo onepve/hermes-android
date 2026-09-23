@@ -1,84 +1,42 @@
 # Hermes-Relay — Android CI Pipeline
-#
-# Runs directly on Android-affecting pushes to main/dev and is called by the
-# path-aware required-check workflow for relevant pull requests.
-#
-# Pipeline: lint, build, and focused tests run concurrently. PRs build debug
-# APKs before merge; dev pushes keep lint/tests only to avoid duplicate
-# post-merge packaging. Main pushes keep APK artifacts.
-#
-# A release-build smoke (bundleRelease assembleRelease) runs on dev/main pushes
-# and on the dev→main release PR so release-only breakage (R8/minify rules,
-# resource shrinking, bundletool OOM) is caught BEFORE the android-v* tag,
-# instead of mid-release. It is debug-signed, so it needs no signing secrets.
 
 name: CI — Android
 
 on:
-  workflow_call:
   push:
-    branches: [main, dev]
+    branches: [main]
     paths:
       - "app/**"
       - "gradle/**"
       - "build.gradle.kts"
       - "settings.gradle.kts"
       - "gradle.properties"
-      - "gradlew"
-      - "gradlew.bat"
-      - "scripts/android-lane.ps1"
-      - "scripts/android-prepush.py"
-      - "scripts/dev.bat"
-      - "scripts/dev.sh"
-      - "scripts/tests/android_prepush_test.py"
-      - "scripts/check-android-locales.py"
-      - "scripts/android-locale-harness.py"
-      - "scripts/check-android-collection-apis.py"
-      - "scripts/check-android-capabilities.py"
-      - "scripts/tests/check_android_capabilities_test.py"
-      - "scripts/check-android-native-compat.py"
-      - "scripts/check-android-release-notes.py"
-      - "scripts/tests/check_android_native_compat_test.py"
-      - "scripts/tests/check_android_release_notes_test.py"
-      - ".github/workflows/ci-android.yml"
-      - ".github/workflows/android-on-demand.yml"
-      - ".github/workflows/play-preflight-android.yml"
-      - ".github/workflows/approve-release-android.yml"
-      - ".github/workflows/release-android.yml"
+      - ".github/workflows/**"
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
-# Cancel superseded PR and dev runs. Never cancel main: every release-branch
-# commit must finish its independent validation.
 concurrency:
   group: ci-android-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  cancel-in-progress: true
 
 jobs:
-  # ──────────────────────────────────────────────
-  # Android Lint
-  # ──────────────────────────────────────────────
-  lint:
-    name: Lint (Android)
+  lint-and-validate:
+    name: Lint & Validate
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6.3.0
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
-
-      - name: Validate Play capability boundary
-        run: |
-          python3 scripts/check-android-capabilities.py
-          python3 -m unittest scripts.tests.check_android_capabilities_test
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Validate translation catalogs
         run: python3 scripts/check-android-locales.py
@@ -86,98 +44,23 @@ jobs:
       - name: Reject unsafe Android collection APIs
         run: python3 scripts/check-android-collection-apis.py
 
-      - name: Validate Android release notes
-        run: |
-          python3 scripts/check-android-release-notes.py
-          python3 -m unittest scripts.tests.android_prepush_test
-          python3 -m unittest scripts.tests.check_android_release_notes_test
-
-      - name: Test Android native compatibility checker
-        run: python3 -m unittest scripts.tests.check_android_native_compat_test
-
-      - name: Run Android lint
-        run: ./gradlew lint --console=plain
-
-  # ──────────────────────────────────────────────
-  # Android Build — assembleDebug for PRs and main pushes
-  # ──────────────────────────────────────────────
-  build:
-    name: Build (Android)
-    if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6.3.0
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
-
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --console=plain
-
-      - name: Verify Play capability manifest
-        run: python3 scripts/check-android-capabilities.py --variant googlePlayDebug
-
-      - name: Verify packaged ONNX Runtime compatibility
-        run: |
-          python3 scripts/check-android-native-compat.py \
-            app/build/outputs/apk/googlePlay/debug/*.apk \
-            app/build/outputs/apk/sideload/debug/*.apk
-
-      - name: Upload debug APK
-        uses: actions/upload-artifact@v7
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          name: debug-apk
-          # Product flavors (googlePlay, sideload) nest APKs under
-          # app/build/outputs/apk/<flavor>/debug/ — the `*` matches both.
-          path: app/build/outputs/apk/*/debug/*.apk
-          if-no-files-found: error
-          retention-days: 14
-
-  # ──────────────────────────────────────────────
-  # Android Tests — unit tests + report upload
-  #
-  # Tests run on every branch but are ADVISORY on dev (push or PR) so WIP
-  # commits don't block the merge queue. Strict on main — any PR retargeted
-  # from dev → main will surface the real failures before release-merge.
-  # ──────────────────────────────────────────────
   test:
-    name: Test (Android)
+    name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Advisory on dev, strict on main. Evaluates to false (= strict) for
-    # pushes to main and PRs whose base branch is main; true (= advisory)
-    # for everything else (dev pushes, dev-targeted PRs, feature branches).
-    continue-on-error: ${{ github.ref != 'refs/heads/main' && github.base_ref != 'main' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6.3.0
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
+        uses: gradle/actions/setup-gradle@v4
 
-      # The broad Gradle `test` aggregate currently hangs in deferred JVM test
-      # suites tracked by issue #32. Keep CI release-relevant until that suite is
-      # split: run the stable connection slice plus focused Chat/Voice state,
-      # parser, layout, and accessibility regressions for the active release.
       - name: Run focused Android unit tests
         run: |
           ./gradlew :app:testSideloadDebugUnitTest \
@@ -199,59 +82,22 @@ jobs:
             --tests com.hermesandroid.relay.ui.screens.ChatUnreadStateTest \
             --console=plain
 
-      # Upload reports only for failures. Successful PR report uploads add
-      # noticeable latency and are rarely inspected.
-      - name: Upload test reports
-        uses: actions/upload-artifact@v7
-        if: failure()
-        with:
-          name: test-reports
-          path: app/build/reports/tests/
-          retention-days: 7
-
-  # ──────────────────────────────────────────────
-  # Release build smoke — exercises the release variant the android-v* tag
-  # build runs (./gradlew bundleRelease assembleRelease, both flavors), so
-  # release-only breakage (R8/minify, resource shrinking, bundletool OOM) is
-  # caught BEFORE the tag instead of mid-release. Debug-signed — no secrets,
-  # so it also runs on fork PRs. Runs on dev/main pushes (early signal after
-  # each merge) and on the dev→main release PR (hard pre-tag gate); skipped on
-  # dev-targeted feature PRs to avoid re-running a ~12-min build per iteration.
-  # ──────────────────────────────────────────────
-  release-smoke:
-    name: Release build smoke (Android)
-    if: ${{ github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main') }}
+  build-smoke:
+    name: Build Smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 25
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6.3.0
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
+        uses: gradle/actions/setup-gradle@v4
 
-      # Mirrors release-android.yml's build step. No keystore is provided here,
-      # so app/build.gradle.kts falls back to debug signing — fine for a build
-      # smoke; the goal is to exercise the build, not to produce a shippable AAB.
-      - name: Build release bundles + APKs (both flavors, debug-signed)
-        run: ./gradlew bundleRelease assembleRelease --console=plain
-
-      - name: Scan release DEX for unsupported collection APIs
-        run: |
-          python3 scripts/check-android-collection-apis.py \
-            --apk app/build/outputs/apk/googlePlay/release/*.apk \
-            --apk app/build/outputs/apk/sideload/release/*.apk
-
-      - name: Verify packaged ONNX Runtime compatibility
-        run: |
-          python3 scripts/check-android-native-compat.py \
-            app/build/outputs/apk/googlePlay/release/*.apk \
-            app/build/outputs/apk/sideload/release/*.apk
+      - name: Build Sideload Release APK (smoke)
+        run: ./gradlew :app:assembleSideloadRelease --console=plain

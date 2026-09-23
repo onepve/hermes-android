@@ -1,0 +1,35 @@
+# Check Upstream Updates Workflow
+name: Check Upstream Updates
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # 每天 UTC 02:00 (北京时间 10:00) 自动检查
+  workflow_dispatch:
+
+jobs:
+  check-upstream:
+    name: Check Upstream Releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for new release from Codename-11/hermes-relay
+        run: |
+          UPSTREAM_TAG=$(gh api repos/Codename-11/hermes-relay/releases/latest --jq '.tag_name' 2>/dev/null || echo "unknown")
+          LOCAL_TAG=$(gh api repos/onepve/hermes-relay/releases/latest --jq '.tag_name' 2>/dev/null || echo "none")
+          
+          echo "Upstream latest release: $UPSTREAM_TAG"
+          echo "Local latest release: $LOCAL_TAG"
+          
+          if [ "$UPSTREAM_TAG" != "unknown" ] && [ "$UPSTREAM_TAG" != "$LOCAL_TAG" ]; then
+            echo "🚀 **检测到上游有新版本更新！**" >> $GITHUB_STEP_SUMMARY
+            echo "- 上游最新版本: \`$UPSTREAM_TAG\`" >> $GITHUB_STEP_SUMMARY
+            echo "- 本地当前版本: \`$LOCAL_TAG\`" >> $GITHUB_STEP_SUMMARY
+            echo "请运行 \`python3 scripts/sync-upstream.py\` 进行同步。" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **当前版本已与上游保持同步。**" >> $GITHUB_STEP_SUMMARY
+            echo "- 最新版本: \`$UPSTREAM_TAG\`" >> $GITHUB_STEP_SUMMARY
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

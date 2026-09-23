@@ -1,114 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Sideload flavor manifest overlay.
-
-    Merged on top of `app/src/main/AndroidManifest.xml` for the `sideloadDebug`
-    / `sideloadRelease` variants. This track is NOT shipped through Google Play.
-
-    For the Play-safe Bridge Core split, this sideload manifest owns the
-    AccessibilityService and device-control foreground service declarations.
-    The googlePlay flavor does not merge either service.
-
-    Future Device Control permissions / activities belong here unless they are
-    intentionally safe for the Google Play Bridge Core build.
--->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-        Tier C (C1-C4) sideload-only permissions.
-
-        These are deliberately kept outside Play's voice-only capability surface.
-        SMS permissions require an eligible default-handler/approved use on Play;
-        contacts, foreground location and CALL_PHONE have distinct requirements.
-        Their omission here is a product boundary, not a blanket permission ban.
-
-        Each of the four `android_*` tools (location, search_contacts, call,
-        send_sms) runtime-checks the corresponding permission in
-        `ActionExecutor` and returns a helpful error if the user hasn't granted
-        it in system Settings. The tools themselves are additionally flavor-
-        gated in `BridgeCommandHandler` so the googlePlay build returns
-        `device_control_sideload_only` 403s instead of crashing on a missing
-        permission.
-
-        Source: docs/plans/2026-04-13-bridge-feature-expansion.md § Tier C.
-    -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-feature
-        android:name="android.hardware.telephony"
-        android:required="false" />
+    <!-- Clean permissions for tailored Hermes-Relay release -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-
-    <!-- Doze allow-list for the opt-in "Persistent connection" keep-alive.
-         A specialUse FGS holds the process up but does NOT exempt from Doze's
-         network deferral, so the socket still drops in deep sleep unless the
-         app is battery-optimization exempt. Sideload only — Google Play
-         restricts this permission to a short list of app categories, so the
-         googlePlay flavor never declares it (the Settings nudge is flavor-
-         gated to sideload). See util/BatteryOptimizations.kt. -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
-    <!-- Screen recording — sideload only. googlePlay doesn't declare
-         /screenshot or the MEDIA_PROJECTION FGS type. See the main
-         manifest's comment on why the permission was moved here. -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-
-    <!-- Package visibility for Device Control app enumeration / launch routes. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
     </queries>
-
-    <!-- v0.4.1 unattended-access mode: DISABLE_KEYGUARD lets the app
-         call KeyguardManager.requestDismissKeyguard for None / Swipe
-         locks. The system rejects the call against credential locks
-         (PIN / pattern / biometric) regardless of this permission, so
-         the limitation we surface in the UI is structural rather than
-         permission-shaped — but holding the permission lets the silent-
-         dismiss path work for users who set their lock screen to None
-         or Swipe specifically to use unattended access.
-
-         WAKE_LOCK is declared above because only the sideload Device Control
-         track uses WakeLockManager for gesture dispatch. Unattended access
-         adds SCREEN_BRIGHT to the lock-flag bitmask at acquire time. No
-         additional permission is needed for the screen-bright flag —
-         WAKE_LOCK covers both lock levels. -->
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-
-    <application>
-        <service
-            android:name=".accessibility.HermesAccessibilityService"
-            android:exported="true"
-            android:label="@string/a11y_service_label"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_service_config" />
-        </service>
-
-        <service
-            android:name=".bridge.BridgeForegroundService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse|mediaProjection">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Maintains the sideload Device Control bridge while the user has explicitly enabled agent control." />
-        </service>
-
-        <!-- Note: GatewayKeepAliveService ("Keep connected in background") is
-             declared in the MAIN manifest so both flavors ship it. -->
-    </application>
 
 </manifest>
