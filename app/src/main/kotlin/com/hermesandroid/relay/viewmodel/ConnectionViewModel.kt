@@ -286,14 +286,7 @@ internal fun RelayUiInputs.requiresReconnectGrace(): Boolean =
         auth is AuthState.Paired &&
         (conn == ConnectionState.Disconnected || conn == ConnectionState.Reconnecting)
 
-internal fun RelayUiInputs.resolveRelayUiState(graceElapsed: Boolean = false): RelayUiState = when {
-    !configured || url.isBlank() -> RelayUiState.NotConfigured
-    auth is AuthState.Failed -> RelayUiState.Expired
-    auth is AuthState.Paired && conn == ConnectionState.Connected -> RelayUiState.Connected
-    conn == ConnectionState.Connecting || auth is AuthState.Pairing -> RelayUiState.Connecting
-    requiresReconnectGrace() -> if (graceElapsed) RelayUiState.Stale else RelayUiState.Connecting
-    else -> RelayUiState.Disconnected
-}
+internal fun RelayUiInputs.resolveRelayUiState(graceElapsed: Boolean = false): RelayUiState = RelayUiState.NotConfigured
 
 private data class ConnectionHealthInputs(
     val connection: Connection?,
@@ -7649,7 +7642,7 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
      * probes `GET /health` without touching the WSS channel.
      */
     private fun connectRelayInternal(url: String, freshPairing: Boolean = false) {
-        if (isDemoMode.value) return // Demo mode is offline — never open the WSS channel.
+        return // Relay WSS disabled in pure AI mode
         if (!authManager.hasPairContext) {
             android.util.Log.i(
                 "ConnectionVM",

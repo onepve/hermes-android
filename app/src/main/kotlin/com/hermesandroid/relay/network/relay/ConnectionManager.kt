@@ -422,11 +422,8 @@ class ConnectionManager(
                         "url=${relayRoute.relayWebSocketUrl()}",
                 )
             }
-            if (targetUrl != null) {
-                connectToUrlOnMainPath(targetUrl)
-            } else {
-                Log.d(TAG, "connect: selected route has no Relay surface; route published for HTTP/Gateway clients")
-            }
+            // Lightweight AI Assistant mode: Relay WebSocket channel is completely disabled.
+            Log.d(TAG, "connect: Relay surface disabled; route published for HTTP/Gateway clients")
         }
     }
 
@@ -1110,14 +1107,11 @@ class ConnectionManager(
         replaceReason: String = "Relay socket replaced",
         scheduledReconnect: Boolean = false,
     ) {
-        if (isRelayRateLimitBackoffActive(
-                rateLimitBackoffUntilMs,
-                SystemClock.elapsedRealtime(),
-            )
-        ) {
-            Log.i(TAG, "doConnect: preserving active rate-limit backoff")
-            return
-        }
+        authenticated = false
+        _connectionState.value = ConnectionState.Disconnected
+        Log.d(TAG, "doConnect: Relay WSS disabled in pure AI mode")
+        return
+    }
         val existingState = _connectionState.value
         if (previousSocketToClose == null &&
             serverUrl == url &&
