@@ -451,14 +451,7 @@ internal fun resolveEffectiveRelayUrl(
     activeRelayEndpoint: EndpointCandidate?,
     relayConfigured: Boolean,
 ): String {
-    if (!relayConfigured) return ""
-    activeRelayEndpoint?.pluginProxyRoutesOrNull()?.relayWebSocketUrl?.let { return it }
-    activeRelayEndpoint?.relay?.url?.trim()?.takeIf(String::isNotBlank)?.let { return it }
-    return if (RelayUrlDeriver.isAutoManagedRelayUrl(savedRelayUrl, savedApiUrl)) {
-        RelayUrlDeriver.deriveFromApiUrl(savedApiUrl) ?: savedRelayUrl
-    } else {
-        savedRelayUrl
-    }
+    return ""
 }
 
 /**
@@ -1595,11 +1588,7 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     private fun isRelayConfiguredFor(connection: Connection?, auth: AuthState): Boolean {
-        if (auth is AuthState.Paired) return true
-        if (connection?.pairedAt != null) return true
-        val relayUrl = connection?.relayUrl?.trim().orEmpty()
-        return relayUrl.isNotBlank() &&
-            !RelayUrlDeriver.isAutoManagedRelayUrl(relayUrl, connection?.apiServerUrl.orEmpty())
+        return false
     }
 
     private fun activeRelayConfiguredSnapshot(): Boolean =

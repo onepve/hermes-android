@@ -46,8 +46,35 @@ fun resolveChatRuntimeStatus(
             transport = owner,
             fallback = false,
         )
-        ChatTransportReadiness.Connecting -> ChatRuntimeStatus.Connecting
+        ChatTransportReadiness.Connecting -> {
+            if (owner == ChatTransportPath.Gateway && apiSse == ChatTransportReadiness.Ready) {
+                ChatRuntimeStatus.Connected(
+                    transport = ChatTransportPath.ApiSse,
+                    fallback = true,
+                )
+            } else {
+                ChatRuntimeStatus.Connecting
+            }
+        }
         ChatTransportReadiness.NotConfigured,
-        ChatTransportReadiness.Unavailable -> ChatRuntimeStatus.Unavailable
+        ChatTransportReadiness.Unavailable -> {
+            val fallbackTransport = when (owner) {
+                ChatTransportPath.Gateway -> ChatTransportPath.ApiSse
+                ChatTransportPath.ApiSse -> ChatTransportPath.Gateway
+            }
+            val fallbackReadiness = when (fallbackTransport) {
+                ChatTransportPath.Gateway -> gateway
+                ChatTransportPath.ApiSse -> apiSse
+            }
+            when (fallbackReadiness) {
+                ChatTransportReadiness.Ready -> ChatRuntimeStatus.Connected(
+                    transport = fallbackTransport,
+                    fallback = true,
+                )
+                ChatTransportReadiness.Connecting -> ChatRuntimeStatus.Connecting
+                ChatTransportReadiness.NotConfigured,
+                ChatTransportReadiness.Unavailable -> ChatRuntimeStatus.Unavailable
+            }
+        }
     }
 }

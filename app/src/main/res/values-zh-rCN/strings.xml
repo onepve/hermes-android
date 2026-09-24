@@ -686,7 +686,7 @@
     <string name="settings_dashboard_missing">仪表盘缺失</string>
     <string name="settings_dashboard_offline">仪表盘离线</string>
     <string name="settings_dashboard_sign_in">仪表盘登录</string>
-    <string name="settings_relay_reconnecting">Relay 重连中</string>
+    <string name="settings_relay_reconnecting">正在连接…</string>
     <string name="settings_relay_stale">Relay 过期</string>
     <string name="settings_pairing_expired">配对已过期</string>
     <string name="settings_relay_offline">Relay 离线</string>
