@@ -13,7 +13,24 @@ import java.net.URI
 object RelayUrlDeriver {
     const val DEFAULT_RELAY_PORT: Int = 8767
 
-    fun deriveFromApiUrl(apiUrl: String, relayPort: Int = DEFAULT_RELAY_PORT): String? = null
+    fun deriveFromApiUrl(apiUrl: String, relayPort: Int = DEFAULT_RELAY_PORT): String? {
+        val trimmed = apiUrl.trim().trimEnd('/')
+        if (trimmed.isEmpty()) return null
+
+        val uri = runCatching { URI(trimmed) }.getOrNull() ?: return null
+        val relayScheme = when (uri.scheme?.lowercase()) {
+            "http" -> "ws"
+            "https" -> "wss"
+            else -> return null
+        }
+        val host = uri.host?.takeIf { it.isNotBlank() } ?: return null
+        val hostPart = if (host.contains(":") && !host.startsWith("[")) {
+            "[$host]"
+        } else {
+            host
+        }
+        return "$relayScheme://$hostPart:$relayPort"
+    }
 
     fun isAutoManagedRelayUrl(relayUrl: String, apiUrl: String): Boolean {
         val trimmed = relayUrl.trim().trimEnd('/')
