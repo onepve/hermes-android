@@ -59,15 +59,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Optional local-only fast path for device iteration. Native voice/VAD
-        // dependencies make the universal sideload APK very large, while a
-        // connected phone needs only its own ABI. Release and normal debug
-        // builds remain universal unless the developer explicitly supplies
-        // -Phermes.devAbi=<abi>.
-        hermesDevAbi?.let { requestedAbi ->
-            ndk {
-                abiFilters += requestedAbi
-            }
+        // Locked to 64-bit ARM (arm64-v8a) for all modern Android phones to eliminate
+        // redundant x86/x86_64/armeabi-v7a native libraries (reduces APK size by ~70%).
+        ndk {
+            abiFilters += listOf("arm64-v8a")
         }
 
         // Feature flags — DEV_MODE enables all experimental features in debug builds
@@ -371,9 +366,8 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.ui.compose)
 
-    // android-vad Silero — on-device VAD for barge-in (B2)
-    // Bundled ONNX Silero model (~2.2 MB); pulled from JitPack.
-    implementation(libs.android.vad.silero)
+    // android-vad Silero replaced with zero-dependency pure Kotlin RMS energy detection
+    // implementation(libs.android.vad.silero)
 
     // Experimental, opt-in local keyword spotting. Models are downloaded only
     // after the user enables the feature; no model binary is bundled in APKs.
