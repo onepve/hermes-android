@@ -1112,25 +1112,6 @@ class ConnectionManager(
         Log.d(TAG, "doConnect: Relay WSS disabled in pure AI mode")
         return
     }
-        val existingState = _connectionState.value
-        if (previousSocketToClose == null &&
-            serverUrl == url &&
-            (existingState == ConnectionState.Connecting ||
-                existingState == ConnectionState.Connected ||
-                (existingState == ConnectionState.Reconnecting && !scheduledReconnect))
-        ) {
-            Log.i(TAG, "doConnect: already ${existingState.name.lowercase()} to $url — skipping duplicate open")
-            return
-        }
-
-        _connectionState.value = if (reconnectState.reconnectAttempt > 0) {
-            ConnectionState.Reconnecting
-        } else {
-            ConnectionState.Connecting
-        }
-
-        scope.launch { doConnectInternal(url, previousSocketToClose, replaceReason) }
-    }
 
     private suspend fun doConnectInternal(
         url: String,
