@@ -1159,7 +1159,7 @@ fun ActiveCardSecurityPosture(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Dns,
+                        imageVector = Icons.Filled.Lan,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp),
