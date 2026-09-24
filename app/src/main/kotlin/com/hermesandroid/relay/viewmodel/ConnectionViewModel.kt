@@ -5877,26 +5877,6 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
      */
     private suspend fun probeRelayHealth(force: Boolean = false) {
         _relayServerHealth.value = HealthStatus.Unknown
-        return
-            // Demo mode is offline — never probe the relay.
-            _relayServerHealth.value = HealthStatus.Unknown
-            return
-        }
-        if (!force && !activeRelayConfiguredSnapshot()) {
-            _relayServerHealth.value = HealthStatus.Unknown
-            return
-        }
-        val url = effectiveRelayUrlSnapshot()
-        if (url.isBlank()) {
-            _relayServerHealth.value = HealthStatus.Unknown
-            return
-        }
-        val result = relayHttpClient.probeHealth(url, logSuccess = false)
-        _relayServerHealth.value = if (result.isSuccess) {
-            HealthStatus.Reachable
-        } else {
-            HealthStatus.Unreachable
-        }
     }
 
     suspend fun verifyRelayForVoice(): Result<Unit> {
