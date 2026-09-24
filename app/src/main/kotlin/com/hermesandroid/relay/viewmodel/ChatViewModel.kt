@@ -4130,44 +4130,15 @@ class ChatViewModel : ViewModel() {
         mode: SessionMessageLoadMode = SessionMessageLoadMode.LATEST,
         profileName: String? = currentSessionProfileName(),
     ): List<MessageItem> {
-        if (profileMessageLoader != null) {
-            return loadGatewaySessionHistory(
-                sessionId,
-                requireProfileScope = true,
-                mode = mode,
-                profileName = profileName,
-            )
-        }
-        if (streamingEndpoint == "gateway" && requireProfileScope) {
-            return loadGatewaySessionHistory(sessionId, true, mode, profileName)
-        }
         return apiClient?.getMessages(sessionId, mode) ?: emptyList()
     }
 
-    /**
-     * Read a Gateway-owned session through the active profile even if the live
-     * transport has just downgraded to SSE. Detached completion belongs to the
-     * profile/session that created it; consulting the mutable endpoint here can
-     * otherwise fall through to the shared API database.
-     */
     private suspend fun loadGatewaySessionHistory(
         sessionId: String,
         requireProfileScope: Boolean = false,
         mode: SessionMessageLoadMode = SessionMessageLoadMode.LATEST,
         profileName: String? = currentSessionProfileName(),
     ): List<MessageItem> {
-        val scoped = profileMessageLoader?.invoke(profileName, sessionId, mode)
-        if (scoped != null) {
-            // A gateway profile owns a distinct state.db. Never fall through to
-            // the launch/default API database when its scoped read fails: an
-            // empty/default transcript is not authoritative for this session.
-            return if (requireProfileScope) scoped.getOrThrow() else scoped.getOrElse { emptyList() }
-        }
-        if (requireProfileScope) {
-            throw IllegalStateException(
-                "Profile-scoped conversation history is unavailable for this connection.",
-            )
-        }
         return apiClient?.getMessages(sessionId, mode) ?: emptyList()
     }
 

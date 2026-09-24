@@ -195,11 +195,7 @@ internal class HermesRuntimeBinder(
                 true
             }
         }
-        chat.setProfileSessionLister { null }
-        chat.setProfileSessionPageLister { _, _, _ -> null }
-        chat.setProfileMessageLoaderWithMode { _, _, _ -> null }
-        chat.setDashboardSignInRequiredHandler { }
-        chat.setDashboardConfigLoader { null }
+        // Dashboard/Gateway RPC bindings completely pruned for Direct API single track.
         chat.profileSessionDeleter = connection::deleteSession
         chat.profileSessionRenamer = connection::renameSession
         chat.profileSessionPinner = connection::setSessionPinned
