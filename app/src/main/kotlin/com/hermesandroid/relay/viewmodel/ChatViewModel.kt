@@ -2,6 +2,7 @@ package com.hermesandroid.relay.viewmodel
 
 import com.hermesandroid.relay.data.BusyMessageAction
 import com.hermesandroid.relay.data.canCorrectBusyMessage
+import com.hermesandroid.relay.network.upstream.DashboardHttpException
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -330,8 +331,10 @@ internal fun shouldReloadHistoryAfterSuccessfulTurn(
 internal fun shouldSuppressPassiveSessionError(context: String?, error: Throwable?): Boolean {
     if (context != "load_sessions" && context != "load_profile_sessions") return false
     if (isConnectivityError(error)) return true
+    if (error is DashboardHttpException) return true
     val message = error?.message?.lowercase().orEmpty()
-    return "401" in message || "403" in message ||
+    return "401" in message || "403" in message || "502" in message ||
+        "bad gateway" in message || "dashboard" in message ||
         "unauthorized" in message || "forbidden" in message
 }
 

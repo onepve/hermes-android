@@ -499,32 +499,7 @@ internal fun resolveEffectiveDashboardUrl(
     connection: Connection?,
     endpoint: EndpointCandidate?,
 ): String {
-    if (connection == null) return ""
-    connection.authenticatedDashboardOrigin
-        ?.let(::normalizeCredentialFreeAuthenticatedDashboardOrigin)
-        ?.let { return it }
-    // The resolver publishes independently of the active connection. During a
-    // switch its last winner can still belong to the outgoing installation.
-    // Never use that winner as authority for the incoming connection's bearer.
-    val routes = connection.routeCandidates.ifEmpty {
-        Connection.buildRouteCandidates(
-            apiServerUrl = connection.apiServerUrl,
-            relayUrl = connection.relayUrl,
-            dashboardUrl = connection.configuredDashboardUrl,
-        )
-    }
-    val ownedEndpoint = endpoint?.takeIf { it in routes }
-    ownedEndpoint?.pluginProxyRoutesOrNull()?.dashboardBaseUrl?.let { return it }
-    ownedEndpoint?.dashboard?.url
-        ?.takeIf { it.isNotBlank() }
-        ?.let { return it }
-    ownedEndpoint?.api?.url?.let { apiUrl ->
-        connection.dashboardUrl
-            ?.takeIf { it.isNotBlank() && Connection.urlsShareHost(it, apiUrl) }
-            ?.let { return it }
-        Connection.deriveDefaultDashboardUrl(apiUrl)?.let { return it }
-    }
-    return connection.resolvedDashboardUrl
+    return ""
 }
 
 internal fun isCurrentDashboardProbe(
@@ -1749,11 +1724,7 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
      * used to read the persisted `resolvedDashboardUrl`, which kept voice
      * aimed at the LAN host after the resolver had moved chat to Tailscale.)
      */
-    fun activeDashboardUrl(): String? =
-        resolveEffectiveDashboardUrl(
-            connection = activeConnectionSnapshot(),
-            endpoint = connectionManager.activeEndpoint.value,
-        ).takeIf { it.isNotBlank() }
+    fun activeDashboardUrl(): String? = null
 
     /**
      * Promote the exact reviewed Dashboard origin that completed cookie/OIDC

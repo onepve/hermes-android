@@ -103,10 +103,7 @@ data class Connection(
 ) {
     /** Saved Dashboard/Gateway route before any authenticated-origin override. */
     val configuredDashboardUrl: String
-        get() = dashboardUrl
-            ?.trim()
-            ?.takeIf { it.isNotBlank() }
-            ?: deriveDefaultDashboardUrl(apiServerUrl).orEmpty()
+        get() = ""
 
     /**
      * Effective Dashboard/Gateway endpoint. A verified authenticated origin
@@ -115,9 +112,7 @@ data class Connection(
      * [configuredDashboardUrl].
      */
     val resolvedDashboardUrl: String
-        get() = authenticatedDashboardOrigin
-            ?.let(::normalizeCredentialFreeAuthenticatedDashboardOrigin)
-            ?: configuredDashboardUrl
+        get() = ""
 
     /** Stable display/host identity that does not depend on the API surface. */
     val primaryEndpointUrl: String
@@ -395,13 +390,7 @@ data class Connection(
                 role = role.ifBlank { inferRouteRole(apiServerUrl) },
                 priority = priority,
                 api = ApiEndpoint(host = host, port = port, tls = tls),
-                dashboard = dashboardUrl
-                    ?.trim()
-                    ?.trimEnd('/')
-                    ?.takeIf { it.isNotBlank() && urlsShareHost(it, apiServerUrl) }
-                    ?.let { DashboardEndpoint(url = it) }
-                    ?: deriveDefaultDashboardUrl(apiServerUrl)
-                    ?.let { DashboardEndpoint(url = it) },
+                dashboard = null,
                 relay = RelayEndpoint(url = resolvedRelayUrl, transportHint = transportHint),
             )
         }

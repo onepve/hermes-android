@@ -195,26 +195,11 @@ internal class HermesRuntimeBinder(
                 true
             }
         }
-        chat.setProfileSessionLister { profileName ->
-            connection.listProfileScopedSessions(
-                profileName = profileName,
-                limit = SESSION_DIRECTORY_PAGE_SIZE,
-                excludeSources = connection.hiddenSources.value,
-            )
-        }
-        chat.setProfileSessionPageLister { profileName, offset, limit ->
-            connection.listProfileScopedSessions(
-                profileName = profileName,
-                limit = limit,
-                offset = offset,
-                excludeSources = connection.hiddenSources.value,
-            )
-        }
-        chat.setProfileMessageLoaderWithMode { profileName, sessionId, mode ->
-            connection.loadProfileScopedMessages(profileName, sessionId, mode)
-        }
-        chat.setDashboardSignInRequiredHandler(connection::probeNow)
-        chat.setDashboardConfigLoader { connection.loadActiveDashboardConfig() }
+        chat.setProfileSessionLister { null }
+        chat.setProfileSessionPageLister { _, _, _ -> null }
+        chat.setProfileMessageLoaderWithMode { _, _, _ -> null }
+        chat.setDashboardSignInRequiredHandler { }
+        chat.setDashboardConfigLoader { null }
         chat.profileSessionDeleter = connection::deleteSession
         chat.profileSessionRenamer = connection::renameSession
         chat.profileSessionPinner = connection::setSessionPinned
