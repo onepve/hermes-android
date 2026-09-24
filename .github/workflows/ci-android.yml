@@ -44,6 +44,9 @@ jobs:
       - name: Reject unsafe Android collection APIs
         run: python3 scripts/check-android-collection-apis.py
 
+      - name: Guard OnePve client customization invariants
+        run: python3 scripts/check-client-invariants.py
+
   test:
     name: Unit Tests
     runs-on: ubuntu-latest

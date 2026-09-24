@@ -5,7 +5,7 @@
     <string name="clarify_batch_expired">このリクエストは終了しました</string>
     <string name="clarify_batch_sending">回答を送信中…</string>
     <string name="clarify_batch_answered">回答済みの質問（%1$d）</string>
-    <string name="app_name">Hermes-Relay</string>
+    <string name="app_name">Hermes</string>
     <string name="app_title">Hermes-Relay</string>
     <string name="agent_interface">エージェントインターフェース</string>
     <string name="notification_companion_label">Hermes-Relay 通知コンパニオン</string>

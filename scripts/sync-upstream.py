@@ -19,10 +19,16 @@ PROTECTED_FILES = [
     "app/src/main/kotlin/com/hermesandroid/relay/update/UpdateChecker.kt",
     "app/src/main/kotlin/com/hermesandroid/relay/update/UpdateModels.kt",
     "app/src/main/kotlin/com/hermesandroid/relay/wake/WakeWordDetector.kt",
+    "app/src/main/kotlin/com/hermesandroid/relay/network/relay/RelayHttpClient.kt",
+    "app/src/main/kotlin/com/hermesandroid/relay/viewmodel/ConnectionViewModel.kt",
+    "app/src/main/kotlin/com/hermesandroid/relay/viewmodel/ChatRuntimeStatus.kt",
+    "app/src/main/res/values-zh",
+    "app/src/main/res/values-zh-rCN",
     "app/src/sideload/AndroidManifest.xml",
     ".github/workflows/release-android.yml",
     ".github/workflows/ci-android.yml",
     ".github/workflows/upstream-check.yml",
+    "scripts/check-client-invariants.py",
     "scripts/publish_r2.py",
 ]
 
@@ -103,7 +109,7 @@ def main():
     print("   1. 创建临时隔离分支: git checkout -b sync-upstream-preview")
     print("   2. 合并上游分支:     git merge upstream/main --no-commit")
     print("   3. 检查受保护文件:   git checkout HEAD -- " + " ".join([f for f in conflicts_risk if Path(f).exists()]))
-    print("   4. 本地编译与单测:   python3 scripts/check-android-capabilities.py")
+    print("   4. 本地编译与门禁:   python3 scripts/check-client-invariants.py && python3 scripts/check-android-capabilities.py")
     print("   5. 确认无误后提交合入 main。")
 
 

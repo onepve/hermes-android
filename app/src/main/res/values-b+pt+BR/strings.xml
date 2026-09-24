@@ -5,7 +5,7 @@
     <string name="clarify_batch_expired">Esta solicitação terminou</string>
     <string name="clarify_batch_sending">Enviando resposta…</string>
     <string name="clarify_batch_answered">Perguntas respondidas (%1$d)</string>
-    <string name="app_name">Hermes-Relay</string>
+    <string name="app_name">Hermes</string>
     <string name="app_title">Hermes-Relay</string>
     <string name="agent_interface">interface do agente</string>
     <string name="notification_companion_label">assistente de notificações do Hermes-Relay</string>
