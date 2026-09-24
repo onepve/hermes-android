@@ -3,7 +3,7 @@ name: Check Upstream Updates
 
 on:
   schedule:
-    - cron: "0 2 * * *" # 每天 UTC 02:00 (北京时间 10:00) 自动检查
+    - cron: "0 2 * * 1" # 每周一 UTC 02:00 (北京时间每周一 10:00) 自动检查
   workflow_dispatch:
 
 jobs:
