@@ -13,7 +13,7 @@
     outside the declared use case.
 -->
 <resources>
-    <string name="app_name">Hermes Dev</string>
+    <string name="app_name">Hermes</string>
     <string name="a11y_service_label">Hermes-Bridge Dev</string>
     <string name="notification_companion_label">Hermes Dev 通知コンパニオン</string>
     <string name="a11y_description_sideload">Hermes Bridge は、エージェントに電話機への完全な読み取り/書き込みアクセス権を与え、音声と視覚によるハンズフリー制御を可能にします。すべてのアクションはアクティビティ ログに記録され、破壊的なアクションにはユーザーの確認が必要です。</string>

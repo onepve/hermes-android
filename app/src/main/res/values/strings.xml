@@ -33,10 +33,10 @@
     <string name="chat_debug_init_recovery" translatable="false">Hermes could not initialize the agent. Check the server runtime and logs before retrying; signing in again may not resolve this.</string>
     <string name="chat_debug_session_id" translatable="false">Session · %1$s</string>
     <string name="chat_debug_connections" translatable="false">Connection settings</string>
-    <string name="app_name">Hermes-Relay</string>
-    <string name="app_title">Hermes-Relay</string>
+    <string name="app_name">Hermes</string>
+    <string name="app_title">Hermes</string>
     <string name="agent_interface">agent interface</string>
-    <string name="notification_companion_label">Hermes-Relay notification companion</string>
+    <string name="notification_companion_label">Hermes notification companion</string>
 
     <string name="onboarding_skip_setup_title">Skip setup?</string>
     <string name="onboarding_skip_setup_text">No problem — you can explore the demo to see how Hermes-Relay works, and add your own Hermes Gateway anytime from Settings → Gateways. Relay pairing for power tools can be added later too.</string>
@@ -1399,12 +1399,12 @@
     <string name="about_update_copied">Update command copied</string>
     <string name="about_copy_fix">Copy fix</string>
     <string name="about_update_command_body">Run on your Hermes host, then restart the gateway:\n%1$s</string>
-    <string name="about_updates">Updates</string>
-    <string name="about_updates_tap">Tap to check GitHub for a new release</string>
-    <string name="about_updates_checking">Checking…</string>
-    <string name="about_updates_latest">You\'re on the latest release</string>
-    <string name="about_updates_available">Update available — v%1$s</string>
-    <string name="about_updates_failed">Check failed: %1$s</string>
+    <string name="about_updates">软件更新</string>
+    <string name="about_updates_tap">点击检查新版本</string>
+    <string name="about_updates_checking">正在检查更新…</string>
+    <string name="about_updates_latest">已是最新版本</string>
+    <string name="about_updates_available">发现新版本 — v%1$s</string>
+    <string name="about_updates_failed">检查更新失败：%1$s</string>
     <string name="about_download">Download</string>
     <string name="about_check">Check</string>
     <string name="about_github">GitHub</string>
@@ -3366,14 +3366,14 @@
     <string name="term_search_cd_close">Close search</string>
 
     <!-- UpdateAvailableBanner -->
-    <string name="update_banner_available">Update available</string>
-    <string name="update_banner_downloading">Downloading update&#8230;</string>
-    <string name="update_banner_ready">Update ready &#8212; restart</string>
-    <string name="update_banner_update">Update</string>
-    <string name="update_banner_restart">Restart</string>
+    <string name="update_banner_available">有可用更新</string>
+    <string name="update_banner_downloading">正在下载更新…</string>
+    <string name="update_banner_ready">更新已就绪 — 重启以安装</string>
+    <string name="update_banner_update">立即更新</string>
+    <string name="update_banner_restart">重启</string>
 
     <!-- UpdateBanner -->
-    <string name="update_banner_cd_dismiss">Dismiss</string>
+    <string name="update_banner_cd_dismiss">忽略</string>
 
     <!-- VoiceOverlayHost -->
     <string name="voice_overlay_title">Voice Overlay</string>
@@ -3581,8 +3581,8 @@
 
 
     <!-- UpdateBanner format strings (with version placeholders) -->
-    <string name="update_banner_available_fmt">Update available &#8212; v%1$s</string>
-    <string name="update_banner_body_fmt">You are on %1$s. Tap Update to download.</string>
+    <string name="update_banner_available_fmt">有可用更新 &#8212; v%1$s</string>
+    <string name="update_banner_body_fmt">当前版本：%1$s。点击更新即可下载安装。</string>
 
     <string name="attach_viewer_cd_close">Close</string>
     <string name="attach_viewer_cd_mute">Mute</string>

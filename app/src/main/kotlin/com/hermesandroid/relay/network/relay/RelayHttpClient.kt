@@ -1246,6 +1246,7 @@ class RelayHttpClient(
         relayUrl: String,
         logSuccess: Boolean = true,
     ): Result<RelayHealth> = withContext(Dispatchers.IO) {
+        return@withContext Result.failure(IOException("Relay disabled in pure AI mode"))
         val trimmed = relayUrl.trim()
         val operation = "Relay health probe before WebSocket connection"
         if (trimmed.isEmpty()) {

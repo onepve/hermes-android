@@ -5876,7 +5876,8 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
      * [testRelayReachable] which is the user-facing Save & Test action.
      */
     private suspend fun probeRelayHealth(force: Boolean = false) {
-        if (isDemoMode.value) {
+        _relayServerHealth.value = HealthStatus.Unknown
+        return
             // Demo mode is offline — never probe the relay.
             _relayServerHealth.value = HealthStatus.Unknown
             return
