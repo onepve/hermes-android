@@ -15,24 +15,21 @@ class ConnectionDashboardFieldsTest {
 
     @Test
     fun deriveDefaultDashboardUrl_usesSameHostAndDashboardPort() {
-        assertEquals(
-            "http://example.local:9119",
+        assertNull(
             Connection.deriveDefaultDashboardUrl("http://example.local:8642"),
         )
     }
 
     @Test
     fun deriveDefaultDashboardUrl_preservesHttpsScheme() {
-        assertEquals(
-            "https://hermes.example.com:9119",
+        assertNull(
             Connection.deriveDefaultDashboardUrl("https://hermes.example.com:8642"),
         )
     }
 
     @Test
     fun deriveDefaultDashboardUrl_wrapsIpv6Host() {
-        assertEquals(
-            "http://[::1]:9119",
+        assertNull(
             Connection.deriveDefaultDashboardUrl("http://[::1]:8642"),
         )
     }

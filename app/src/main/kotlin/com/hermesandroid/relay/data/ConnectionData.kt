@@ -215,22 +215,8 @@ data class Connection(
             apiServerUrl: String,
             dashboardPort: Int = DEFAULT_DASHBOARD_PORT,
         ): String? {
-            val trimmed = apiServerUrl.trim().trimEnd('/')
-            if (trimmed.isEmpty()) return null
-
-            val uri = runCatching { URI(trimmed) }.getOrNull() ?: return null
-            val scheme = when (uri.scheme?.lowercase()) {
-                "http" -> "http"
-                "https" -> "https"
-                else -> return null
-            }
-            val host = uri.host?.takeIf { it.isNotBlank() } ?: return null
-            val hostPart = if (host.contains(":") && !host.startsWith("[")) {
-                "[$host]"
-            } else {
-                host
-            }
-            return "$scheme://$hostPart:$dashboardPort"
+            // Disabled in pure Direct API mode to prevent auto-deriving 8682 and triggering reconnect loops
+            return null
         }
 
         /** Derive the conventional same-host direct API fallback from a Dashboard URL. */

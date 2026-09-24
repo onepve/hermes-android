@@ -301,7 +301,7 @@ fun ConnectionDetailScreen(
                                 onReconnect = onReconnect,
                                 onRepair = { onRepair(connectionId) },
                                 onOpenApiInfo = { showApiInfoSheet = true },
-                                onOpenDashboard = onNavigateToManage,
+                                onOpenDashboard = {},
                                 onOpenRelayInfo = { showRelayInfoSheet = true },
                                 onOpenRoutes = {
                                     selectedTab = tabs.indexOf(DetailTab.Routes)
@@ -329,7 +329,7 @@ fun ConnectionDetailScreen(
                         connectionViewModel = connectionViewModel,
                         onNavigateToPairedDevices = onNavigateToPairedDevices,
                         onRevokeRelay = { showRevokeConfirm = true },
-                        onOpenDashboardSignIn = onNavigateToManage,
+                        onOpenDashboardSignIn = {},
                         onUseSelectedRoute = {
                             connectionViewModel.useSelectedDashboardRoute { result ->
                                 result.onFailure {

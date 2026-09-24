@@ -88,6 +88,8 @@ fun resolveChatTransportStatus(
                 reason = "Gateway connected",
                 detail = ChatTransportTier.Gateway.detailText(),
             )
+            serverCapabilities.sessionsChatStream -> manualSse(ChatTransportTier.Sessions, true)
+            serverCapabilities.portable -> manualSse(ChatTransportTier.Completions, true)
             else -> unavailable(
                 ChatTransportTier.Gateway,
                 gatewayFallbackReason(gatewayAvailability),

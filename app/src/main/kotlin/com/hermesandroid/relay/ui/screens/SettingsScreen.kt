@@ -590,15 +590,6 @@ fun SettingsScreen(
             SettingsSectionHeader(stringResource(R.string.settings_hermes))
 
             SettingsCategoryRow(
-                icon = Icons.Filled.Link,
-                title = stringResource(R.string.settings_hermes_management),
-                subtitle = stringResource(R.string.settings_hermes_management_desc),
-                badge = dashboardPill,
-                onClick = onNavigateToManage,
-                isDarkTheme = isDarkTheme,
-            )
-
-            SettingsCategoryRow(
                 icon = Icons.Filled.Extension,
                 title = stringResource(R.string.plugins_title),
                 subtitle = stringResource(R.string.settings_plugins_desc),

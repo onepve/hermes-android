@@ -1886,8 +1886,8 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
 
     private val streamingEndpointPreference: StateFlow<String> =
         application.relayDataStore.data
-            .map { it[KEY_STREAMING_ENDPOINT] ?: "auto" }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, "auto")
+            .map { it[KEY_STREAMING_ENDPOINT] ?: "sessions" }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, "sessions")
 
     // Readiness follows the active conversation owner, not any reachable sibling route.
     val chatReady: StateFlow<Boolean> = combine(

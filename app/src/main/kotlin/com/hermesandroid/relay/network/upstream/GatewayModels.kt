@@ -103,10 +103,11 @@ fun resolveStreamingEndpointPreference(
     preference: String,
     gateway: GatewayAvailability,
     capabilities: ServerCapabilities,
-    gatewayOwned: Boolean = true,
+    gatewayOwned: Boolean = false,
 ): String = when (preference) {
-    "sessions", "completions", "runs", "gateway" -> preference
-    else -> if (gatewayOwned) "gateway" else capabilities.preferredChatEndpoint()
+    "sessions", "completions", "runs" -> preference
+    "gateway" -> if (gateway == GatewayAvailability.Ready) "gateway" else capabilities.preferredChatEndpoint()
+    else -> if (gatewayOwned && gateway == GatewayAvailability.Ready) "gateway" else capabilities.preferredChatEndpoint()
 }
 
 /**
