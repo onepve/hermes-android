@@ -6,13 +6,15 @@ name: Hermes-Relay Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "android-v*"
       - "v*"
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "Release Tag (e.g. v1.17.2)"
+        description: "Release Tag (e.g. v2.1.0)"
         required: false
         default: ""
 
@@ -80,11 +82,15 @@ jobs:
         run: |
           if [ -n "${{ github.event.inputs.tag_name }}" ]; then
             TAG="${{ github.event.inputs.tag_name }}"
-          else
+            VERSION="${TAG#v}"
+            VERSION="${VERSION#android-v}"
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
+            VERSION="${TAG#v}"
+            VERSION="${VERSION#android-v}"
+          else
+            VERSION=$(grep -E 'appVersionName\s*=' gradle/libs.versions.toml | head -n 1 | sed -E 's/.*"([^"]+)".*/\1/')
           fi
-          VERSION="${TAG#v}"
-          VERSION="${VERSION#android-v}"
 
           SRC_APK=$(find app/build/outputs/apk -name "*sideload*release*.apk" | head -n 1)
           if [ -z "$SRC_APK" ]; then

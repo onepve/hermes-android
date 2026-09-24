@@ -92,59 +92,60 @@ def main():
         region_name="auto",
     )
 
-    prefix = "hermes-relay"
-    versioned_key = f"{prefix}/hermes-relay-v{version}.apk"
-    latest_key = f"{prefix}/hermes-relay-latest.apk"
-    manifest_key = f"{prefix}/version.json"
-
-    download_url_latest = f"https://dl.onepve.com/{latest_key}"
-    download_url_versioned = f"https://dl.onepve.com/{versioned_key}"
-
-    print(f"🚀 Uploading {versioned_key} ...")
-    with open(apk_path, "rb") as f:
-        s3.put_object(
-            Bucket=bucket,
-            Key=versioned_key,
-            Body=f,
-            ContentType="application/vnd.android.package-archive",
-        )
-
-    print(f"🚀 Uploading {latest_key} ...")
-    with open(apk_path, "rb") as f:
-        s3.put_object(
-            Bucket=bucket,
-            Key=latest_key,
-            Body=f,
-            ContentType="application/vnd.android.package-archive",
-        )
-
+    prefixes = ["hermes", "hermes-relay"]
     now_iso = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    manifest = {
-        "version": version,
-        "version_code": version_code,
-        "download_url": download_url_latest,
-        "versioned_download_url": download_url_versioned,
-        "sha256": sha256,
-        "md5": md5,
-        "size": file_size,
-        "changelog": "极限精简纯净版，纯原生能量VAD，专为现代64位Android手机设计",
-        "published_at": now_iso,
-    }
+    for prefix in prefixes:
+        versioned_key = f"{prefix}/hermes-relay-v{version}.apk" if prefix == "hermes-relay" else f"{prefix}/hermes-v{version}.apk"
+        latest_key = f"{prefix}/hermes-relay-latest.apk" if prefix == "hermes-relay" else f"{prefix}/hermes-latest.apk"
+        manifest_key = f"{prefix}/version.json"
 
-    manifest_bytes = json.dumps(manifest, indent=2, ensure_ascii=False).encode("utf-8")
-    print(f"🚀 Uploading {manifest_key} ...")
-    s3.put_object(
-        Bucket=bucket,
-        Key=manifest_key,
-        Body=manifest_bytes,
-        ContentType="application/json",
-        CacheControl="no-cache, no-store, must-revalidate",
-    )
+        download_url_latest = f"https://dl.onepve.com/{latest_key}"
+        download_url_versioned = f"https://dl.onepve.com/{versioned_key}"
 
-    print("\n✅ Successfully published to Cloudflare R2!")
-    print(f"   Manifest: https://dl.onepve.com/{manifest_key}")
-    print(f"   Download: {download_url_latest}")
+        print(f"🚀 Uploading {versioned_key} ...")
+        with open(apk_path, "rb") as f:
+            s3.put_object(
+                Bucket=bucket,
+                Key=versioned_key,
+                Body=f,
+                ContentType="application/vnd.android.package-archive",
+            )
+
+        print(f"🚀 Uploading {latest_key} ...")
+        with open(apk_path, "rb") as f:
+            s3.put_object(
+                Bucket=bucket,
+                Key=latest_key,
+                Body=f,
+                ContentType="application/vnd.android.package-archive",
+            )
+
+        manifest = {
+            "version": version,
+            "version_code": version_code,
+            "download_url": download_url_latest,
+            "versioned_download_url": download_url_versioned,
+            "sha256": sha256,
+            "md5": md5,
+            "size": file_size,
+            "changelog": "采用上游官方完整成熟 UI 与 Thinking 思考折叠机制，彻底解耦 Relay/Dashboard/Gateway RPC 沉重耦合，直连 Direct API",
+            "published_at": now_iso,
+        }
+
+        manifest_bytes = json.dumps(manifest, indent=2, ensure_ascii=False).encode("utf-8")
+        print(f"🚀 Uploading {manifest_key} ...")
+        s3.put_object(
+            Bucket=bucket,
+            Key=manifest_key,
+            Body=manifest_bytes,
+            ContentType="application/json",
+            CacheControl="no-cache, no-store, must-revalidate",
+        )
+
+        print(f"✅ Successfully published {prefix} to Cloudflare R2!")
+        print(f"   Manifest: https://dl.onepve.com/{manifest_key}")
+        print(f"   Download: {download_url_latest}")
 
 
 if __name__ == "__main__":
