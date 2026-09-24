@@ -1,6 +1,6 @@
-# Hermes-Relay Android — Single Signed APK Release Pipeline
+# Hermes-Relay Android — Single Signed APK Release Pipeline (Cloudflare R2 Direct Publish)
 #
-# Builds the single clean, signed release APK and publishes it to GitHub Releases.
+# Builds the single clean, signed release APK and publishes it directly to Cloudflare R2 (dl.onepve.com).
 
 name: Hermes-Relay Release
 
@@ -12,16 +12,16 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "Release Tag (e.g. android-v1.17.0)"
+        description: "Release Tag (e.g. v1.17.2)"
         required: false
         default: ""
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   release:
-    name: Build & Publish Release APK
+    name: Build & Publish Release APK to Cloudflare R2
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -40,6 +40,15 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python Dependencies
+        run: |
+          pip install boto3
+
       - name: Decode Release Keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.HERMES_KEYSTORE_BASE64 }}
@@ -57,14 +66,25 @@ jobs:
         run: |
           ./gradlew :app:assembleSideloadRelease --no-daemon --stacktrace
 
-      - name: Prepare Release Artifacts
-        id: prepare
+      - name: Clean Keystore
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/keystore"
+
+      - name: Publish to Cloudflare R2
+        env:
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
           if [ -n "${{ github.event.inputs.tag_name }}" ]; then
             TAG="${{ github.event.inputs.tag_name }}"
           else
             TAG="${GITHUB_REF#refs/tags/}"
           fi
+          VERSION="${TAG#v}"
+          VERSION="${VERSION#android-v}"
 
           SRC_APK=$(find app/build/outputs/apk -name "*sideload*release*.apk" | head -n 1)
           if [ -z "$SRC_APK" ]; then
@@ -76,24 +96,7 @@ jobs:
             exit 1
           fi
 
-          mkdir -p dist
-          FINAL_APK="dist/hermes-relay-${TAG}.apk"
-          cp "$SRC_APK" "$FINAL_APK"
+          # Extract versionCode from gradle/libs.versions.toml
+          VERSION_CODE=$(grep -E 'appVersionCode\s*=' gradle/libs.versions.toml | head -n 1 | sed -E 's/.*"([0-9]+)".*/\1/')
 
-          cd dist
-          sha256sum "hermes-relay-${TAG}.apk" > "hermes-relay-${TAG}.apk.sha256"
-          cd ..
-
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          ls -la dist/
-
-      - name: Create GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG="${{ steps.prepare.outputs.tag }}"
-          gh release create "$TAG" \
-            "dist/hermes-relay-${TAG}.apk" \
-            "dist/hermes-relay-${TAG}.apk.sha256" \
-            --title "Hermes-Relay ${TAG}" \
-            --notes "Hermes-Relay 精简纯净正式版 ${TAG}。已剥离离线唤醒模型与无障碍高危权限，内置专属正式签名。"
+          python3 scripts/publish_r2.py "$SRC_APK" "$VERSION" "$VERSION_CODE"
