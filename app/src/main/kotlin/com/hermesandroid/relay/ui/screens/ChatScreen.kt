@@ -3430,14 +3430,6 @@ fun ChatScreen(
                                             ) {
                                                 Text(stringResource(R.string.chat_connect_hermes))
                                             }
-                                            if (onTryDemo != null) {
-                                                TextButton(
-                                                    onClick = onTryDemo,
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                ) {
-                                                    Text(stringResource(R.string.chat_try_demo))
-                                                }
-                                            }
                                         }
                                     }
                                 }

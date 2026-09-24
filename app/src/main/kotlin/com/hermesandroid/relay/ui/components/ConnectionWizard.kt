@@ -1759,22 +1759,8 @@ private fun NewNearbyHermesStep(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            TextButton(onClick = { openExternalUrl(context, SetupGuideUrl) }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.MenuBook,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.size(6.dp))
-                Text(stringResource(R.string.cw_setup_guide))
-            }
             TextButton(onClick = onAdvanced, enabled = setupReady) {
                 Text(stringResource(R.string.cw_advanced))
-            }
-        }
-        if (onTryDemo != null) {
-            TextButton(onClick = onTryDemo, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.cw_try_demo))
             }
         }
         if (onSkip != null) {
@@ -2261,36 +2247,6 @@ private fun MethodStep(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            OutlinedButton(
-                onClick = { openExternalUrl(context, SetupGuideUrl) },
-                modifier = Modifier.weight(1f),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.MenuBook,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.size(6.dp))
-                Text(stringResource(R.string.cw_setup_guide))
-            }
-            OutlinedButton(
-                onClick = { openExternalUrl(context, HermesApiDocsUrl) },
-                modifier = Modifier.weight(1f),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.MenuBook,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-                Spacer(Modifier.size(6.dp))
-                Text(stringResource(R.string.cw_hermes_api))
-            }
-        }
 
         MethodTile(
             icon = Icons.Filled.Check,

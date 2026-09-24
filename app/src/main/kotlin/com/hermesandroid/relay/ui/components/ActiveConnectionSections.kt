@@ -719,48 +719,6 @@ fun ActiveCardAdvancedSection(
         }
 
         HorizontalDivider()
-
-        Text(text = stringResource(R.string.active_section_relay), style = MaterialTheme.typography.titleMedium)
-        Text(
-            text = relayUrl.ifBlank { stringResource(R.string.active_section_not_configured) },
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = stringResource(R.string.active_section_relay_optional_bridge),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Button(onClick = onPairRelay) {
-            Icon(Icons.Filled.QrCodeScanner, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(stringResource(R.string.detail_pair_relay))
-        }
-        TextButton(onClick = { relayEditorOpen = !relayEditorOpen }) {
-            Text(stringResource(R.string.active_section_direct_relay_endpoint))
-        }
-        if (relayEditorOpen) {
-            Surface(
-                color = Color.Transparent,
-                shape = appearanceRoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            ) {
-                Column(
-                    modifier = Modifier.padding(14.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                        TextButton(onClick = { relayEditorOpen = false }) {
-                            Text(stringResource(R.string.active_section_done))
-                        }
-                    }
-                    ManualUrlSubsection(connectionViewModel, showApi = false, showRelay = true)
-                }
-            }
-        }
-
-        HorizontalDivider()
         Text(
             text = stringResource(R.string.active_section_connection_behavior),
             style = MaterialTheme.typography.titleMedium,
@@ -1416,14 +1374,6 @@ fun ActiveCardSecurityPosture(
             }
         }
 
-        OutlinedButton(
-            onClick = onRevokeRelay,
-            enabled = relaySessionUsable && currentPairedSession != null,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Icon(Icons.Filled.LinkOff, contentDescription = null)
-            Text(stringResource(R.string.active_section_revoke_relay), modifier = Modifier.padding(start = 8.dp))
-        }
         Text(
             text = stringResource(R.string.active_section_credentials_encrypted),
             style = MaterialTheme.typography.bodySmall,

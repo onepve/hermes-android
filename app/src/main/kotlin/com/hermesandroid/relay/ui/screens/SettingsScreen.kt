@@ -355,32 +355,6 @@ fun SettingsScreen(
         )
         else -> null
     }
-    // The Relay tools below all ride the optional plugin. Rather than stamp an
-    // identical badge on every card (noise, not signal), the dependency is
-    // surfaced ONCE on the section header as a single plugin-state badge.
-    val pluginBadge = when (relayUiState) {
-        RelayUiState.NotConfigured -> SettingsStatusPillModel(
-            label = stringResource(R.string.relay_state_optional),
-            tone = SettingsStatusTone.Info,
-        )
-        RelayUiState.Connected -> SettingsStatusPillModel(
-            label = stringResource(R.string.relay_state_ready),
-            tone = SettingsStatusTone.Good,
-        )
-        RelayUiState.Connecting -> SettingsStatusPillModel(
-            label = stringResource(R.string.relay_state_reconnecting),
-            tone = SettingsStatusTone.Info,
-        )
-        RelayUiState.Stale,
-        RelayUiState.Disconnected -> SettingsStatusPillModel(
-            label = stringResource(R.string.relay_state_unavailable),
-            tone = SettingsStatusTone.Warning,
-        )
-        RelayUiState.Expired -> SettingsStatusPillModel(
-            label = stringResource(R.string.relay_state_needs_repair),
-            tone = SettingsStatusTone.Warning,
-        )
-    }
 
     // Kick a WSS reconnect when Settings first composes so the Connections
     // subpage's active-card relay row doesn't flash Disconnected on cold
@@ -636,7 +610,7 @@ fun SettingsScreen(
                 isDarkTheme = isDarkTheme,
             )
 
-            SettingsSectionHeader(stringResource(R.string.settings_power_tools), trailing = pluginBadge)
+            SettingsSectionHeader(stringResource(R.string.settings_power_tools))
 
             SettingsCategoryRow(
                 icon = Icons.AutoMirrored.Filled.Message,

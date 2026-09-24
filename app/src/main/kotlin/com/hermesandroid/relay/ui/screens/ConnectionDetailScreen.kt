@@ -220,30 +220,6 @@ fun ConnectionDetailScreen(
                         )
                         DropdownMenuItem(
                             text = {
-                                Text(if (connection.pairedAt == null) stringResource(R.string.detail_pair_relay) else stringResource(R.string.detail_repair))
-                            },
-                            onClick = {
-                                menuExpanded = false
-                                onRepair(connectionId)
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Filled.QrCodeScanner,
-                                    contentDescription = null,
-                                )
-                            },
-                        )
-                        if (connection.pairedAt != null) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.detail_revoke)) },
-                                onClick = {
-                                    menuExpanded = false
-                                    showRevokeConfirm = true
-                                },
-                            )
-                        }
-                        DropdownMenuItem(
-                            text = {
                                 Text(stringResource(R.string.detail_remove), color = MaterialTheme.colorScheme.error)
                             },
                             onClick = {
@@ -602,40 +578,19 @@ private fun ActiveOverview(
             modifier = Modifier.weight(1f),
         )
         OverviewCapabilityCard(
-            icon = Icons.Filled.Dashboard,
-            label = stringResource(R.string.conn_manage_label),
-            status = manageStatus,
-            modifier = Modifier.weight(1f),
-            onClick = onOpenDashboard,
-        )
-        OverviewCapabilityCard(
             icon = Icons.Filled.GraphicEq,
             label = stringResource(R.string.conn_voice_label),
             status = voiceStatus,
             modifier = Modifier.weight(1f),
-            onClick = if (
-                standardVoiceAvailability == StandardVoiceAvailability.SignInRequired
-            ) {
-                onOpenDashboard
-            } else {
-                null
-            },
+            onClick = null,
         )
     }
 
     HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
     OverviewOptionalRow(
-        icon = Icons.Filled.Link,
-        label = stringResource(R.string.active_section_relay_connected_features),
-        description = stringResource(R.string.active_section_relay_optional_summary),
-        status = relayStatus,
-        onClick = if (relayConfigured) onOpenRelayInfo else onRepair,
-    )
-    HorizontalDivider()
-    OverviewOptionalRow(
         icon = Icons.Filled.Code,
-        label = stringResource(R.string.api_fallback_title),
-        description = stringResource(R.string.active_section_api_not_required),
+        label = "Hermes Direct API",
+        description = "直连服务端端口 8681，单轨通信",
         status = apiStatus,
         onClick = onOpenApiInfo,
     )

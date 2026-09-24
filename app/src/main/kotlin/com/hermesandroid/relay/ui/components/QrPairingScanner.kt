@@ -29,6 +29,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material3.OutlinedButton
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
@@ -683,6 +689,37 @@ fun QrPairingScanner(
     // AtomicBoolean for thread-safe detection flag (accessed from camera executor thread)
     val hasDetected = remember { AtomicBoolean(false) }
     val cameraProviderRef = remember { mutableStateOf<ProcessCameraProvider?>(null) }
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            try {
+                val inputImage = InputImage.fromFilePath(context, uri)
+                val scanner = BarcodeScanning.getClient()
+                scanner.process(inputImage)
+                    .addOnSuccessListener { barcodes ->
+                        var matched = false
+                        for (barcode in barcodes) {
+                            val raw = barcode.rawValue ?: continue
+                            val payload = parseHermesPairingQr(raw)
+                            if (payload != null) {
+                                matched = true
+                                onPairingDetected(payload)
+                                break
+                            }
+                        }
+                        if (!matched) {
+                            Toast.makeText(context, "未在图片中识别到有效配对二维码", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(context, "图片二维码解析失败", Toast.LENGTH_SHORT).show()
+                    }
+            } catch (t: Throwable) {
+                Toast.makeText(context, "打开图片失败: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     // Set when the camera can't be brought up on this device/ROM (e.g. a
     // foldable that fails CameraX init, or a busy/unavailable back camera).
     // Drives a graceful "pair manually" fallback instead of a force-close —
@@ -779,6 +816,16 @@ fun QrPairingScanner(
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.align(Alignment.Center).semantics { heading() }
                 )
+                IconButton(
+                    onClick = { galleryLauncher.launch("image/*") },
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PhotoLibrary,
+                        contentDescription = "从相册选择",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -979,6 +1026,18 @@ fun QrPairingScanner(
                     },
                     modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 )
+                OutlinedButton(
+                    onClick = { galleryLauncher.launch("image/*") },
+                    modifier = Modifier.padding(top = 8.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PhotoLibrary,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("从相册选择二维码图片")
+                }
             }
         }
     }

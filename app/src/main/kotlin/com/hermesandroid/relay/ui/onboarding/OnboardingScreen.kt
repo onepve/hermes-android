@@ -317,16 +317,6 @@ fun OnboardingScreen(
                         },
                     )
 
-                    if (currentPage == 0) {
-                        TextButton(onClick = onTryDemo) {
-                            Text(
-                                text = stringResource(R.string.chat_try_demo),
-                                color = OnboardingAccent,
-                                style = MaterialTheme.typography.labelLarge,
-                            )
-                        }
-                    }
-
                     SegmentedOnboardingProgress(
                         pageCount = pageCount,
                         currentPage = currentPage,
