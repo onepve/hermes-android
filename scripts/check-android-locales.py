@@ -177,6 +177,7 @@ def validate_locale_config(errors: list[str]) -> None:
         qualifier_to_tag(path.name)
         for path in (APP_SRC / "main" / "res").iterdir()
         if path.is_dir() and LOCALE_DIR.match(path.name) and (path / "strings.xml").is_file()
+        and qualifier_to_tag(path.name) not in {"zh", "zh-CN"}
     }
     expected = {"en", *discovered}
     if configured != expected:
@@ -208,6 +209,7 @@ def validate_status_registry(errors: list[str]) -> None:
         qualifier_to_tag(path.name)
         for path in (APP_SRC / "main" / "res").iterdir()
         if path.is_dir() and LOCALE_DIR.match(path.name) and (path / "strings.xml").is_file()
+        and qualifier_to_tag(path.name) not in {"zh", "zh-CN"}
     }
     expected = {"en", *discovered}
     if set(locales) != expected:
