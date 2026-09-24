@@ -458,10 +458,7 @@ internal fun shouldShowRetainedHistoryDashboardSignIn(
     gatewayAvailability: GatewayAvailability,
     apiReachable: Boolean,
     supervised: Boolean,
-): Boolean = hasMessages &&
-    !supervised &&
-    gatewayAvailability == GatewayAvailability.SignInRequired &&
-    !apiReachable
+): Boolean = false
 
 /**
  * A foreground Gateway-owned Chat must be allowed to open its observation
@@ -5197,35 +5194,7 @@ private fun ChatDashboardSignInCard(
     onNavigateToDashboardSignIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ElevatedCard(
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
-        ),
-        modifier = modifier,
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.dashboard_signin_required_title),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = dashboardRouteMovedHint?.let { route ->
-                    stringResource(R.string.dashboard_signin_route_hint, route)
-                } ?: stringResource(R.string.chat_settings_gateway_needs_signin_desc),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Button(
-                onClick = onNavigateToDashboardSignIn,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(stringResource(R.string.cw_sign_in_to_hermes))
-            }
-        }
-    }
+    // Purged: Pure Direct API client decoupled from dashboard sign-in cards
 }
 
 private fun buildChatLoadingCommands(

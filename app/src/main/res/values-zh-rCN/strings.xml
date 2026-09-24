@@ -25,7 +25,7 @@
     <string name="onboarding_welcome_description">与你自己的 Hermes 聊天、管理\n并使用语音。</string>
     <string name="onboarding_welcome_badge">欢迎</string>
     <string name="onboarding_hermes_logo">Hermes 标志</string>
-    <string name="onboarding_chat_manage_label">仪表盘优先</string>
+    <string name="onboarding_chat_manage_label">网关优先</string>
     <string name="onboarding_chat_manage_description">无需 Relay</string>
     <string name="onboarding_power_tools_label">高级工具稍后添加</string>
     <string name="onboarding_power_tools_description">需要终端或 Bridge 时\n再配对 Relay</string>
@@ -44,13 +44,13 @@
     <string name="onboarding_voice_description">点麦克风就能说话。语音通过你的 Hermes 服务器运行，不需要额外安装。</string>
 
     <string name="onboarding_manage_title">管理</string>
-    <string name="onboarding_manage_description">你的 Hermes 仪表盘，随身携带。</string>
+    <string name="onboarding_manage_description">你的 Hermes 网关，随身携带。</string>
     <string name="onboarding_control_label">控制</string>
     <string name="onboarding_control_description">配置文件、技能、自动化、MCP 服务器、模型和提供商密钥。</string>
     <string name="onboarding_skills_hub_label">技能中心</string>
     <string name="onboarding_skills_hub_description">搜索技能中心、安装前先阅读技能，并可直接从手机安装。</string>
     <string name="onboarding_one_sign_in_label">一次登录</string>
-    <string name="onboarding_one_sign_in_description">登录仪表盘一次后，这个连接也会解锁语音。</string>
+    <string name="onboarding_one_sign_in_description">登录网关一次后，这个连接也会解锁语音。</string>
 
     <string name="onboarding_power_title">高级工具</string>
     <string name="onboarding_power_description">想要比标准能力更多时，再配对可选 Relay。</string>
@@ -128,9 +128,9 @@
 
     <!-- 语音提示 -->
     <string name="voice_toast_signin_route">语音需要在 %1$s 路由上登录一次——打开管理</string>
-    <string name="voice_toast_signin_default">语音需要仪表盘登录——打开管理以登录</string>
+    <string name="voice_toast_signin_default">语音需要网关登录——打开管理以登录</string>
     <string name="voice_toast_unsupported">这个 Hermes 版本没有语音路由——请更新 hermes-agent 或配对 Relay</string>
-    <string name="voice_toast_unreachable">语音需要可达的 Hermes 仪表盘或 Relay 语音路由</string>
+    <string name="voice_toast_unreachable">语音需要可达的 Hermes 网关或 Relay 语音路由</string>
 
     <!-- 聊天界面其他 -->
     <string name="chat_stopped_snackbar">已停止</string>
@@ -189,7 +189,7 @@
     <string name="conn_status_connection_changed">连接已变更</string>
     <string name="conn_status_connected">已连接到 Hermes</string>
     <string name="conn_status_interrupted">连接中断</string>
-    <string name="conn_status_voice_signin">Vanilla Hermes 语音需要仪表盘登录</string>
+    <string name="conn_status_voice_signin">Vanilla Hermes 语音需要网关登录</string>
     <string name="conn_status_voice_blocked">语音被拦截</string>
     <string name="conn_status_checking_relay_voice">正在检查 Relay 语音</string>
     <string name="conn_status_setup_skipped">Vanilla Hermes 设置已跳过</string>
@@ -218,7 +218,7 @@
     <string name="conn_label_status">状态</string>
     <string name="conn_label_connect">连接</string>
     <string name="conn_label_connections">网关</string>
-    <string name="conn_detail_add_connection">添加 Vanilla Hermes API/仪表盘连接</string>
+    <string name="conn_detail_add_connection">添加 Vanilla Hermes API/网关连接</string>
     <string name="conn_detail_waiting_network">等待 Android 报告网络路由</string>
     <string name="conn_detail_chat_unavailable">聊天和个人资料调用可能不可用</string>
     <string name="conn_detail_health_check_failed">健康检查失败</string>
@@ -304,7 +304,7 @@
 
     <!-- 连接向导 —— Connect 页核心文案 -->
     <string name="cw_connect_to_hermes">添加网关</string>
-    <string name="cw_nearby_description">我们将在此网络中查找 Hermes。仪表板和网关提供聊天、管理和语音的标准连接。</string>
+    <string name="cw_nearby_description">我们将在此网络中查找 Hermes。网关和网关提供聊天、管理和语音的标准连接。</string>
     <string name="cw_connection_chooser_description">一个网关代表一套 Hermes 安装。请选择此手机访问它的方式。</string>
     <string name="cw_scan_setup_qr_title">扫描 Hermes 设置二维码</string>
     <string name="cw_scan_setup_qr_subtitle">配置本地、远程及可用的 Relay 路由</string>
@@ -328,11 +328,11 @@
     <string name="cw_cloud_use_nous_address">使用 Nous 托管地址</string>
     <string name="cw_before_connecting">连接之前</string>
     <string name="cw_connect_step_server_title">在电脑上启动 Hermes</string>
-    <string name="cw_connect_step_server_body">在 Hermes 电脑上启动仪表板。首次通过局域网访问时，请使用下方的设置指南，让手机能够访问并启用登录。</string>
+    <string name="cw_connect_step_server_body">在 Hermes 电脑上启动网关。首次通过局域网访问时，请使用下方的设置指南，让手机能够访问并启用登录。</string>
     <string name="cw_connect_step_network_title">让服务器可访问</string>
     <string name="cw_connect_step_network_body">使用同一个 Wi-Fi，或将两台设备都连接到 Tailscale。</string>
     <string name="cw_connect_step_phone_title">从此手机连接</string>
-    <string name="cw_connect_step_phone_body">在下方搜索或输入仪表板地址，例如 192.168.1.10:9119。如有提示请登录；无需 API 密钥。</string>
+    <string name="cw_connect_step_phone_body">在下方搜索或输入网关地址，例如 192.168.1.10:9119。如有提示请登录；无需 API 密钥。</string>
     <string name="cw_nearby_searching">正在搜索附近设备…</string>
     <string name="cw_nearby_searching_hint">请确保手机与 Hermes 服务器位于同一网络。</string>
     <string name="cw_nearby_heading">附近的 Hermes</string>
@@ -343,10 +343,10 @@
     <string name="cw_nearby_enter_address">改为输入地址</string>
     <string name="cw_other_connection_methods">其他连接方式</string>
     <string name="cw_manual_hermes_title">输入网关地址</string>
-    <string name="cw_manual_hermes_description">请输入你在浏览器中打开的仪表板地址。如果此手机无法打开，请启动 hermes dashboard 并检查 Wi-Fi 或 Tailscale。</string>
+    <string name="cw_manual_hermes_description">请输入你在浏览器中打开的网关地址。如果此手机无法打开，请启动 hermes dashboard 并检查 Wi-Fi 或 Tailscale。</string>
     <string name="cw_hermes_address">Hermes 地址</string>
     <string name="cw_hermes_address_placeholder">192.168.1.10 或 hermes.example.com</string>
-    <string name="cw_hermes_address_hint">无需 API 密钥。未指定端口时使用仪表板端口 9119。</string>
+    <string name="cw_hermes_address_hint">无需 API 密钥。未指定端口时使用网关端口 9119。</string>
     <string name="cw_find_hermes">查找 Hermes</string>
     <string name="cw_hermes_found">已找到 Hermes</string>
     <string name="cw_ready_to_connect">可以连接</string>
@@ -358,7 +358,7 @@
     <string name="cw_sign_in_to_hermes">登录 Hermes</string>
     <string name="cw_semantics_hermes_available">Hermes 可用</string>
     <string name="cw_semantics_capability">%1$s：%2$s</string>
-    <string name="cw_connect_description">先在主机上启动 Hermes API 或仪表盘，再在此连接。Relay 配对是可选的，仅在需要终端、Bridge、Relay 会话或频道授权时才使用。</string>
+    <string name="cw_connect_description">先在主机上启动 Hermes API 或网关，再在此连接。Relay 配对是可选的，仅在需要终端、Bridge、Relay 会话或频道授权时才使用。</string>
     <string name="cw_try_demo">体验演示</string>
     <string name="cw_try_demo_subtitle">离线探索——无需服务器。</string>
     <string name="cw_setup_guide">安装指南</string>
@@ -370,17 +370,17 @@
     <string name="cw_back">上一步</string>
     <string name="cw_connect_button">连接</string>
     <string name="cw_hermes_label">Hermes</string>
-    <string name="cw_hermes_label_desc">用于聊天和管理。等启用终端、Bridge、Relay 会话或授权时再配对 Relay。仪表盘登录是首选的上游认证方式；API 密钥仍是 Android 聊天的备用方式。</string>
+    <string name="cw_hermes_label_desc">用于聊天和管理。等启用终端、Bridge、Relay 会话或授权时再配对 Relay。网关登录是首选的上游认证方式；API 密钥仍是 Android 聊天的备用方式。</string>
     <string name="cw_api_url_label">API 服务器地址或主机名</string>
     <string name="cw_api_key_label">API 密钥</string>
     <string name="cw_api_key_placeholder">API_SERVER_KEY 的值</string>
-    <string name="cw_api_key_hint">在仪表盘网关传输启用前，Android 聊天需要此密钥。</string>
+    <string name="cw_api_key_hint">在网关网关传输启用前，Android 聊天需要此密钥。</string>
     <string name="cw_tailscale_label">远程访问——Tailscale 地址（可选）</string>
-    <string name="cw_dashboard">仪表盘</string>
+    <string name="cw_dashboard">网关</string>
     <string name="cw_dashboard_routes_hint">路由：默认优先，Tailscale 在可达时作为备用。</string>
-    <string name="cw_dashboard_url_override">仪表盘地址覆盖（可选）</string>
+    <string name="cw_dashboard_url_override">网关地址覆盖（可选）</string>
     <string name="cw_api_port">API 端口</string>
-    <string name="cw_dashboard_port">仪表盘端口</string>
+    <string name="cw_dashboard_port">网关端口</string>
     <string name="cw_port_scan_hint">扫描将使用这些端口。上面的 API 服务器地址也可使用任意自定义端口。</string>
     <string name="cw_update_existing_title">更新现有连接？</string>
     <string name="cw_update_existing_body">你已经有一个指向该服务器的连接：</string>
@@ -390,7 +390,7 @@
 
     <!-- 方法卡片 -->
     <string name="cw_method_hermes_title">Hermes</string>
-    <string name="cw_method_hermes_subtitle">API/仪表盘设置，用于聊天、管理、技能、定时任务、MCP、配置文件、模型和设置</string>
+    <string name="cw_method_hermes_subtitle">API/网关设置，用于聊天、管理、技能、定时任务、MCP、配置文件、模型和设置</string>
     <string name="cw_method_scan_title">扫描设置二维码</string>
     <string name="cw_method_scan_subtitle">扫描包含 API 地址/密钥的二维码；Relay 二维码详情需要 Relay 插件</string>
     <string name="cw_method_pair_code_title">用配对码配对 Relay</string>
@@ -400,9 +400,9 @@
 
     <!-- 标准连接表单 -->
     <string name="cw_api_url_placeholder">192.168.1.10 或 http://你的服务器:8642</string>
-    <string name="cw_api_url_supporting">聊天和会话使用的 Hermes API——裸主机名默认使用 API 端口 8642 和 http://（仪表盘的 9119 端口单独推导）</string>
-    <string name="cw_scan_message">正在扫描本局域网寻找 Hermes 仪表盘/API…</string>
-    <string name="cw_dashboard_signin_hint">通过仪表盘登录以解锁管理和语音——API 密钥仅用于明确配置的 Direct API 连接。</string>
+    <string name="cw_api_url_supporting">聊天和会话使用的 Hermes API——裸主机名默认使用 API 端口 8642 和 http://（网关的 9119 端口单独推导）</string>
+    <string name="cw_scan_message">正在扫描本局域网寻找 Hermes 网关/API…</string>
+    <string name="cw_dashboard_signin_hint">通过网关登录以解锁管理和语音——API 密钥仅用于明确配置的 Direct API 连接。</string>
     <string name="cw_pair_relay_section">配对 Relay（可选）</string>
     <string name="cw_pair_relay_for">为 %1$s 配对 Relay</string>
     <string name="cw_pair_relay_scoped_desc">为这个已保存的 Hermes 连接添加可选的 Relay 扩展。这不会添加或替换服务器。</string>
@@ -416,13 +416,13 @@
     <string name="cw_pair_relay_enter_code_button">输入配对码</string>
     <string name="cw_pairing_success">已配对——Relay 功能已解锁</string>
     <string name="cw_connecting">连接中…</string>
-    <string name="cw_sign_in_to_dashboard">登录到仪表盘</string>
-    <string name="cw_open_dashboard">打开仪表盘</string>
-    <string name="cw_sign_in_hint">打开仪表盘网页以完成登录。</string>
+    <string name="cw_sign_in_to_dashboard">登录到网关</string>
+    <string name="cw_open_dashboard">打开网关</string>
+    <string name="cw_sign_in_hint">打开网关网页以完成登录。</string>
     <string name="cw_advanced_urls_hide">隐藏高级地址和端口</string>
     <string name="cw_advanced_urls_show">高级地址和端口</string>
     <string name="cw_dashboard_url_placeholder">http://你的服务器:%1$d</string>
-    <string name="cw_dashboard_url_supporting">留空以使用 API 主机上的标准仪表盘端口</string>
+    <string name="cw_dashboard_url_supporting">留空以使用 API 主机上的标准网关端口</string>
     <string name="cw_start_chat">开始聊天</string>
     <string name="cw_sign_in_to_manage">登录到管理</string>
     <string name="cw_pair_code_subtitle">仅在主机已注册 Relay 配对码后使用。标准聊天和管理不需要此操作。</string>
@@ -461,7 +461,7 @@
     <string name="cw_insecure_relay_trust">仅当您信任所有连接（LAN、Tailscale、VPN）的网络时才继续。</string>
     <string name="cw_insecure_ack">我了解此配对以明文形式发送流量——网络上的任何人都可以看到。</string>
     <string name="cw_connecting_to_hermes">正在连接到 Hermes</string>
-    <string name="cw_connecting_detail">正在检查 API 服务器、已保存的密钥和仪表盘。</string>
+    <string name="cw_connecting_detail">正在检查 API 服务器、已保存的密钥和网关。</string>
     <string name="cw_pairing_title">正在配对…</string>
     <string name="cw_pairing_failed">配对失败</string>
     <string name="cw_negotiating_relay">正在与 Relay 协商…</string>
@@ -472,16 +472,16 @@
     <string name="cw_api_server_ready">API 服务器就绪</string>
     <string name="cw_api_server_not_reachable">无法连接到 API 服务器</string>
     <string name="cw_manage">管理</string>
-    <string name="cw_dashboard_signed_in">仪表盘已登录</string>
-    <string name="cw_dashboard_sign_in_required">需要登录仪表盘</string>
-    <string name="cw_dashboard_available">仪表盘可用</string>
-    <string name="cw_dashboard_not_reachable">仪表盘尚未可达</string>
-    <string name="cw_dashboard_will_check">仪表盘将在管理中检查</string>
+    <string name="cw_dashboard_signed_in">网关已登录</string>
+    <string name="cw_dashboard_sign_in_required">需要登录网关</string>
+    <string name="cw_dashboard_available">网关可用</string>
+    <string name="cw_dashboard_not_reachable">网关尚未可达</string>
+    <string name="cw_dashboard_will_check">网关将在管理中检查</string>
     <string name="cw_voice">语音</string>
     <string name="cw_voice_ready">您的 Hermes 服务器已准备语音识别</string>
-    <string name="cw_voice_sign_in_to_unlock">登录仪表盘后解锁</string>
+    <string name="cw_voice_sign_in_to_unlock">登录网关后解锁</string>
     <string name="cw_voice_no_routes">Hermes 版本没有语音路由——更新或配对 Relay</string>
-    <string name="cw_voice_after_dashboard">仪表盘可达后检查</string>
+    <string name="cw_voice_after_dashboard">网关可达后检查</string>
     <string name="cw_voice_after_connect">连接后检查</string>
     <string name="cw_remote">远程</string>
     <string name="cw_remote_fallback_ready">备用路由已准备好，可在远离家时使用</string>
@@ -683,9 +683,9 @@
     <string name="settings_api_missing">API 缺失</string>
     <string name="settings_api_checking">API 检测中</string>
     <string name="settings_api_offline">API 离线</string>
-    <string name="settings_dashboard_missing">仪表盘缺失</string>
-    <string name="settings_dashboard_offline">仪表盘离线</string>
-    <string name="settings_dashboard_sign_in">仪表盘登录</string>
+    <string name="settings_dashboard_missing">网关缺失</string>
+    <string name="settings_dashboard_offline">网关离线</string>
+    <string name="settings_dashboard_sign_in">网关登录</string>
     <string name="settings_relay_reconnecting">正在连接…</string>
     <string name="settings_relay_stale">Relay 过期</string>
     <string name="settings_pairing_expired">配对已过期</string>
@@ -704,14 +704,14 @@
     <string name="settings_no_connection">无连接</string>
     <string name="settings_server_default">服务器默认</string>
     <string name="settings_connections">网关</string>
-    <string name="settings_connections_desc">API、仪表盘、Relay 配对和路由</string>
+    <string name="settings_connections_desc">API、网关、Relay 配对和路由</string>
     <string name="settings_hermes">Hermes</string>
     <string name="settings_hermes_management">Hermes 管理</string>
-    <string name="settings_hermes_management_desc">仪表盘功能：技能、定时任务、MCP、配置文件、模型</string>
+    <string name="settings_hermes_management_desc">网关功能：技能、定时任务、MCP、配置文件、模型</string>
     <string name="settings_chat">聊天</string>
     <string name="settings_chat_desc">聊天行为、Gateway、Direct API、工具显示、消息长度</string>
     <string name="settings_voice_mode">语音模式</string>
-    <string name="settings_voice_mode_desc">仪表盘语音、实时 Relay 选项、提供商</string>
+    <string name="settings_voice_mode_desc">网关语音、实时 Relay 选项、提供商</string>
     <string name="settings_threads">话题</string>
     <string name="settings_threads_desc">由 Relay 发起的对话和主动推送（默认关闭）</string>
     <string name="settings_power_tools">Relay 工具</string>
@@ -821,10 +821,10 @@
     <string name="chat_settings_show_system_messages_desc">显示服务器隐藏的 \"[System: …]\" 标记（模型/人格更改）。关闭则与桌面/TUI 一致。</string>
     <string name="chat_settings_streaming_endpoint">流式端点</string>
     <string name="chat_settings_streaming_endpoint_auto_prefix">自动：标准连接使用网关；仅 API 连接使用直接 API。当前使用：</string>
-    <string name="chat_settings_gateway_suffix">（通过仪表盘 WebSocket 实时思考）</string>
+    <string name="chat_settings_gateway_suffix">（通过网关 WebSocket 实时思考）</string>
     <string name="chat_settings_chat_completions_suffix">（通过 /v1/chat/completions 聊天）</string>
     <string name="chat_settings_runs_suffix">（通过显式流式 /v1/runs 聊天）</string>
-    <string name="chat_settings_gateway_desc">网关：通过仪表盘 WebSocket（/api/ws）提供实时思考和丰富工具事件——桌面应用也使用此路径。需要“管理”登录；不可用时，此聊天仍保留在网关，并提示登录或重试。</string>
+    <string name="chat_settings_gateway_desc">网关：通过网关 WebSocket（/api/ws）提供实时思考和丰富工具事件——桌面应用也使用此路径。需要“管理”登录；不可用时，此聊天仍保留在网关，并提示登录或重试。</string>
     <string name="chat_settings_sessions_desc">会话：Hermes 原生 /api/sessions/{id}/chat/stream。</string>
     <string name="chat_settings_chat_desc">聊天：通过 /v1/chat/completions 的 OpenAI 兼容 SSE。</string>
     <string name="chat_settings_runs_desc">Runs：仅在服务器直接流式传输 /v1/runs 时使用。</string>
@@ -900,7 +900,7 @@
     <string name="conn_api_label">API</string>
     <string name="conn_chat_label">聊天</string>
     <string name="conn_manage_label">管理</string>
-    <string name="conn_dashboard_label">仪表盘</string>
+    <string name="conn_dashboard_label">网关</string>
     <string name="conn_voice_label">语音</string>
     <string name="conn_relay_label">Relay</string>
     <string name="conn_just_paired">刚配对</string>
@@ -1324,7 +1324,7 @@
     <string name="dev_settings_onboarding_reset_toast">引导将在下次启动时显示</string>
     <string name="dev_settings_reset_onboarding_cd">重置引导</string>
     <string name="dev_settings_export_settings">导出设置</string>
-    <string name="dev_settings_export_settings_desc">完整备份，包含 API 密钥、令牌和仪表盘 Cookie</string>
+    <string name="dev_settings_export_settings_desc">完整备份，包含 API 密钥、令牌和网关 Cookie</string>
     <string name="dev_settings_export_settings_cd">导出设置</string>
     <string name="dev_settings_import_settings">导入设置</string>
     <string name="dev_settings_import_settings_desc">恢复完整备份并替换已保存的连接</string>
@@ -1369,14 +1369,14 @@
     <string name="dev_settings_import_failed">导入失败——文件无效</string>
     <string name="dev_settings_reset_failed">重置失败</string>
     <string name="dev_settings_export_sensitive_backup_title">导出敏感备份？</string>
-    <string name="dev_settings_export_sensitive_backup_body">此备份包含已保存的连接、API 密钥、Relay 会话令牌、设备 ID 和仪表盘 Cookie。任何持有该文件的人都可能访问您的 Hermes 服务器。</string>
+    <string name="dev_settings_export_sensitive_backup_body">此备份包含已保存的连接、API 密钥、Relay 会话令牌、设备 ID 和网关 Cookie。任何持有该文件的人都可能访问您的 Hermes 服务器。</string>
     <string name="dev_settings_export_action">导出</string>
     <string name="dev_settings_cancel">取消</string>
     <string name="dev_settings_import_backup_title">导入备份？</string>
-    <string name="dev_settings_import_backup_body">导入备份可恢复 API 密钥、Relay 令牌、设备 ID 和仪表盘 Cookie。它将替换此设备上已保存的连接列表。</string>
+    <string name="dev_settings_import_backup_body">导入备份可恢复 API 密钥、Relay 令牌、设备 ID 和网关 Cookie。它将替换此设备上已保存的连接列表。</string>
     <string name="dev_settings_choose_file">选择文件</string>
     <string name="dev_settings_reset_all_app_data_title">重置所有应用数据？</string>
-    <string name="dev_settings_reset_all_app_data_body">这将清除已保存的连接、API 密钥、Relay 令牌、仪表盘 Cookie、设备 ID、设置和缓存数据。如仅需清除单条连接路径，请使用仪表盘登出或 Relay 配对控件。此操作无法撤销。</string>
+    <string name="dev_settings_reset_all_app_data_body">这将清除已保存的连接、API 密钥、Relay 令牌、网关 Cookie、设备 ID、设置和缓存数据。如仅需清除单条连接路径，请使用网关登出或 Relay 配对控件。此操作无法撤销。</string>
     <string name="dev_settings_app_data_reset_toast">应用数据已重置</string>
     <string name="dev_settings_reset_action">重置</string>
 
@@ -1387,9 +1387,9 @@
     <string name="perms_intro_title">权限与功能</string>
     <string name="perms_intro_desc">仅授予您使用的功能。标准聊天和管理无需手机控制权限。</string>
     <string name="perms_section_hermes">Hermes</string>
-    <string name="perms_section_hermes_desc">聊天和管理使用您配置的 Hermes API/仪表盘连接。</string>
+    <string name="perms_section_hermes_desc">聊天和管理使用您配置的 Hermes API/网关连接。</string>
     <string name="perms_chat_and_manage">聊天和管理</string>
-    <string name="perms_chat_and_manage_desc">无需 Android 运行时权限。API/仪表盘认证单独配置。</string>
+    <string name="perms_chat_and_manage_desc">无需 Android 运行时权限。API/网关认证单独配置。</string>
     <string name="perms_badge_included">已包含</string>
     <string name="perms_status_ready">就绪</string>
     <string name="perms_section_on_demand">按需</string>
@@ -1610,7 +1610,7 @@
     <string name="voice_settings_back">返回</string>
     <string name="voice_settings_scope_label">语音范围</string>
     <string name="voice_settings_global_voice">全局语音</string>
-    <string name="voice_settings_standard_scope_body">此连接通过您的 Hermes 服务器配置的 TTS 和 STT（服务器上的 config.yaml，或仪表板的音频设置）说话——它是主机级的，不按个人资料区分。配对 Relay 即可从手机选择提供商、模型和语音，并按个人资料携带。</string>
+    <string name="voice_settings_standard_scope_body">此连接通过您的 Hermes 服务器配置的 TTS 和 STT（服务器上的 config.yaml，或网关的音频设置）说话——它是主机级的，不按个人资料区分。配对 Relay 即可从手机选择提供商、模型和语音，并按个人资料携带。</string>
     <string name="voice_settings_scope_resolving">正在解析当前个人资料的语音范围……</string>
     <string name="voice_settings_label_profile">个人资料</string>
     <string name="voice_settings_label_scope">范围</string>
@@ -1618,15 +1618,15 @@
     <string name="voice_settings_for_profile_title">此个人资料的语音</string>
     <string name="voice_settings_engine_label">语音引擎</string>
     <string name="voice_settings_engine_hermes">Hermes 聊天 + 语音输出</string>
-    <string name="voice_settings_engine_hermes_desc">Hermes 负责聊天、工具和记忆；语音通过标准 Hermes 仪表板或 Relay 运行——取决于下方 STT/TTS 路由的选择。</string>
+    <string name="voice_settings_engine_hermes_desc">Hermes 负责聊天、工具和记忆；语音通过标准 Hermes 网关或 Relay 运行——取决于下方 STT/TTS 路由的选择。</string>
     <string name="voice_settings_engine_realtime">实时 Agent</string>
     <string name="voice_settings_engine_realtime_desc">由提供商原生实时语音配合 Hermes 中介的工具。需要已配对的 Relay。</string>
     <string name="voice_settings_experimental">实验性</string>
     <string name="voice_settings_realtime_no_relay">此网关未配置 Relay，因此实时 Agent 无法启动。请在“设置 → 网关”中配对 Relay，或切回 Hermes 聊天 + 语音输出。</string>
     <string name="voice_settings_route_label">STT/TTS 路由</string>
     <string name="voice_settings_status_ready">就绪</string>
-    <string name="voice_settings_status_sign_in_required">需要仪表板登录</string>
-    <string name="voice_settings_status_dashboard_unreachable">仪表板不可达</string>
+    <string name="voice_settings_status_sign_in_required">需要网关登录</string>
+    <string name="voice_settings_status_dashboard_unreachable">网关不可达</string>
     <string name="voice_settings_status_unsupported_build">此 Hermes 构建不可用</string>
     <string name="voice_settings_status_checking">检查中……</string>
     <string name="voice_settings_relay_not_configured">Relay 未配置</string>
@@ -1634,16 +1634,16 @@
     <string name="voice_settings_status_auto_hermes">就绪——使用 Hermes</string>
     <string name="voice_settings_status_no_route">暂无可用路由</string>
     <string name="voice_settings_route_auto">自动</string>
-    <string name="voice_settings_route_auto_desc">已配对时使用 Relay；否则使用 Hermes 仪表板。推荐。</string>
+    <string name="voice_settings_route_auto_desc">已配对时使用 Relay；否则使用 Hermes 网关。推荐。</string>
     <string name="voice_settings_route_hermes">Hermes</string>
-    <string name="voice_settings_route_hermes_desc">Hermes 桌面版使用的仪表板音频路径——在 Hermes 安装上即可工作，无需 Relay 插件。</string>
+    <string name="voice_settings_route_hermes_desc">Hermes 桌面版使用的网关音频路径——在 Hermes 安装上即可工作，无需 Relay 插件。</string>
     <string name="voice_settings_route_relay">Relay</string>
     <string name="voice_settings_route_relay_desc">Relay 插件语音——支持按个人资料的提供商和流式语音输出。</string>
     <string name="voice_settings_optional">可选</string>
-    <string name="voice_settings_signin_route_hint">无法在 %1$s 路由上复用已保存的仪表板会话。请打开“管理”重新登录并解锁语音。</string>
-    <string name="voice_settings_signin_default_hint">您的 Hermes 仪表板需要先登录，标准语音才能转录或朗读。在 Manage 中登录一次即可为此连接解锁。</string>
+    <string name="voice_settings_signin_route_hint">无法在 %1$s 路由上复用已保存的网关会话。请打开“管理”重新登录并解锁语音。</string>
+    <string name="voice_settings_signin_default_hint">您的 Hermes 网关需要先登录，标准语音才能转录或朗读。在 Manage 中登录一次即可为此连接解锁。</string>
     <string name="voice_settings_sign_in_via_manage">通过 Manage 登录</string>
-    <string name="voice_settings_unsupported_build_body">此 Hermes 服务器构建尚未公开仪表板音频路由。请在服务器上更新 hermes-agent，或配对 Relay 以使用 Relay 语音。</string>
+    <string name="voice_settings_unsupported_build_body">此 Hermes 服务器构建尚未公开网关音频路由。请在服务器上更新 hermes-agent，或配对 Relay 以使用 Relay 语音。</string>
     <string name="voice_settings_tts_title">文本转语音</string>
     <string name="voice_settings_streaming_output_label">流式输出 (/voice/output)</string>
     <string name="voice_settings_streaming_output_desc">Agent 在 Relay 路径上说话所用的提供商、模型和语音。</string>
@@ -1763,7 +1763,7 @@
     <string name="voice_settings_signin_required">需要登录。</string>
     <string name="voice_settings_server_config_title">服务器语音配置</string>
     <string name="voice_settings_standard_badge">标准</string>
-    <string name="voice_settings_server_config_desc">编辑主机的文本转语音和语音转文本设置（config.yaml tts.* / stt.*）——与仪表板音频设置所写入的值相同。适用于新的语音轮次。</string>
+    <string name="voice_settings_server_config_desc">编辑主机的文本转语音和语音转文本设置（config.yaml tts.* / stt.*）——与网关音频设置所写入的值相同。适用于新的语音轮次。</string>
     <string name="voice_settings_no_elevenlabs_key">服务器上没有 ElevenLabs API 密钥——请在 Manage → Keys 中设置 ELEVENLABS_API_KEY 以从列表中选择语音。</string>
     <string name="voice_settings_saving_ellipsis">保存中……</string>
     <string name="voice_settings_discard">放弃</string>
@@ -1858,19 +1858,19 @@
     <string name="dashboard_health_ready">就绪</string>
 
     <!-- KPI strip labels -->
-    <string name="dashboard_metric_dashboard">仪表盘</string>
+    <string name="dashboard_metric_dashboard">网关</string>
     <string name="dashboard_metric_server">服务器</string>
 
     <!-- Return strip -->
     <string name="dashboard_overview_label">概览</string>
 
     <!-- Connection header status line -->
-    <string name="dashboard_status_checking">正在检查仪表盘</string>
-    <string name="dashboard_status_signed_in">仪表盘已登录</string>
-    <string name="dashboard_status_signin_required">需要登录仪表盘</string>
-    <string name="dashboard_status_available">仪表盘可用</string>
+    <string name="dashboard_status_checking">正在检查网关</string>
+    <string name="dashboard_status_signed_in">网关已登录</string>
+    <string name="dashboard_status_signin_required">需要登录网关</string>
+    <string name="dashboard_status_available">网关可用</string>
     <string name="dashboard_provider_prefix">提供商：%1$s</string>
-    <string name="dashboard_no_url">无仪表盘地址</string>
+    <string name="dashboard_no_url">无网关地址</string>
     <string name="dashboard_route_suffix">%1$s 路由</string>
     <string name="dashboard_checked_at">已检查 %1$s</string>
     <string name="dashboard_sign_out">退出登录</string>
@@ -1879,27 +1879,27 @@
     <string name="dashboard_hours_ago">%1$d 小时前</string>
 
     <!-- Sign-in card -->
-    <string name="dashboard_signin_required_title">需要登录仪表盘</string>
+    <string name="dashboard_signin_required_title">需要登录网关</string>
 <string name="dashboard_signin_required_body">登录 %1$s 的 Hermes 以使用聊天、会话、管理和标准语音。</string>
-    <string name="dashboard_signin_route_hint">无法在 %1$s 路由上复用已保存的仪表板会话。请重新登录，以便在此连接的可信路由之间刷新会话。</string>
+    <string name="dashboard_signin_route_hint">无法在 %1$s 路由上复用已保存的网关会话。请重新登录，以便在此连接的可信路由之间刷新会话。</string>
     <string name="dashboard_signin_with_provider">使用 %1$s 登录</string>
     <string name="dashboard_username_password">用户名与密码</string>
     <string name="dashboard_username">用户名</string>
     <string name="dashboard_password">密码</string>
     <string name="dashboard_sign_in">登录</string>
     <string name="dashboard_signing_in">正在登录……</string>
-    <string name="dashboard_no_supported_provider">该仪表盘未提供受 Android 支持的登录方式。</string>
+    <string name="dashboard_no_supported_provider">该网关未提供受 Android 支持的登录方式。</string>
     <string name="dashboard_signin_provider_unavailable_choose">已保存的登录提供商当前不可用。请选择其他已配置的提供商，或稍后重试。</string>
 
     <!-- OAuth sign-in dialog -->
-    <string name="dashboard_oauth_initial_status">请在安全的仪表盘页面完成登录。</string>
-    <string name="dashboard_oauth_verifying">正在验证仪表盘会话……</string>
-    <string name="dashboard_oauth_not_accepted">登录尚未完成。请先走完仪表盘登录流程再继续。</string>
-    <string name="dashboard_oauth_verify_failed">仪表盘登录验证失败</string>
+    <string name="dashboard_oauth_initial_status">请在安全的网关页面完成登录。</string>
+    <string name="dashboard_oauth_verifying">正在验证网关会话……</string>
+    <string name="dashboard_oauth_not_accepted">登录尚未完成。请先走完网关登录流程再继续。</string>
+    <string name="dashboard_oauth_verify_failed">网关登录验证失败</string>
     <string name="dashboard_close_signin">关闭登录</string>
 
     <!-- Error body -->
-    <string name="dashboard_error_title">仪表盘不可用</string>
+    <string name="dashboard_error_title">网关不可用</string>
     <string name="dashboard_error_target">无法从 %1$s 加载</string>
     <string name="dashboard_error_route_suffix">（%1$s 路由）</string>
     <string name="dashboard_retry">重试</string>
@@ -1982,7 +1982,7 @@
     <!-- Confirm dialogs -->
     <string name="dashboard_make_default_title">把 %1$s 设为服务器默认？</string>
     <string name="dashboard_activate_profile_body">这会把 %1$s 设为所有客户端使用的活跃代理，即持久的“hermes use”默认值。聊天里切换代理仅对当前会话生效，不会改变这个默认值。</string>
-    <string name="dashboard_generic_action_body">这将修改 %1$s 的服务器端仪表盘状态。</string>
+    <string name="dashboard_generic_action_body">这将修改 %1$s 的服务器端网关状态。</string>
     <string name="dashboard_set_default">设为默认</string>
     <string name="dashboard_input_action_title">%1$s %2$s</string>
     <string name="dashboard_action_confirm_title">%1$s · %2$s</string>
@@ -2000,10 +2000,10 @@
     <string name="dashboard_expensive_model_title">高成本模型</string>
     <string name="dashboard_expensive_model_default_warning">这个模型的运行成本可能较高。</string>
     <string name="dashboard_use_anyway">仍然使用</string>
-    <string name="dashboard_clear_session_title">清除仪表盘会话？</string>
-    <string name="dashboard_clear_session_body">这会让此连接在本设备上登出 Hermes 仪表盘。你的 API 密钥、已保存的连接和 Relay 配对不会受影响。</string>
+    <string name="dashboard_clear_session_title">清除网关会话？</string>
+    <string name="dashboard_clear_session_body">这会让此连接在本设备上登出 Hermes 网关。你的 API 密钥、已保存的连接和 Relay 配对不会受影响。</string>
     <string name="dashboard_clear_session_button">清除会话</string>
-    <string name="dashboard_session_cleared">仪表盘会话已清除</string>
+    <string name="dashboard_session_cleared">网关会话已清除</string>
 
     <!-- OAuth success message -->
     <string name="dashboard_signed_in">已登录</string>
@@ -2020,7 +2020,7 @@
     <string name="dashboard_main_model_title">主模型</string>
     <string name="dashboard_profile_model_title">%1$s 的模型</string>
     <string name="dashboard_loading_provider_catalog">正在加载提供商目录……</string>
-    <string name="dashboard_no_model_options">仪表盘未返回任何模型选项。</string>
+    <string name="dashboard_no_model_options">网关未返回任何模型选项。</string>
     <string name="dashboard_model_options_load_failed">无法加载模型选项</string>
     <string name="dashboard_model_picker_help">对新会话生效。灰色的提供商缺少密钥——请在“管理 → 密钥”下添加。</string>
     <string name="dashboard_key_missing_suffix"> · 缺少密钥</string>
@@ -2059,15 +2059,15 @@
     <string name="dashboard_soul_save_failed">SOUL.md 保存失败</string>
 
     <!-- Sign-in submit -->
-    <string name="dashboard_signin_no_session">登录已完成，但仪表盘没有返回已认证的会话。</string>
-    <string name="dashboard_signin_failed">仪表盘登录失败</string>
+    <string name="dashboard_signin_no_session">登录已完成，但网关没有返回已认证的会话。</string>
+    <string name="dashboard_signin_failed">网关登录失败</string>
 
     <!-- Loader error fallbacks -->
-    <string name="dashboard_no_url_configured">该连接未配置仪表盘地址。</string>
-    <string name="dashboard_request_failed">仪表盘请求失败</string>
+    <string name="dashboard_no_url_configured">该连接未配置网关地址。</string>
+    <string name="dashboard_request_failed">网关请求失败</string>
 
     <!-- Target line -->
-    <string name="dashboard_target_line">仪表盘：%1$s</string>
+    <string name="dashboard_target_line">网关：%1$s</string>
     <string name="dashboard_target_line_route_suffix"> · %1$s 路由</string>
 
     <!-- Skills update -->
@@ -2320,8 +2320,8 @@
     <string name="active_section_connecting">连接中…</string>
     <string name="active_section_copy_hermes_pair_command">复制 Hermes 配对命令</string>
     <string name="active_section_current_route">路由：%1$s</string>
-    <string name="active_section_dashboard">仪表板</string>
-    <string name="active_section_dashboard_sign_in_hint">从 Manage 登录以使用仪表板功能。</string>
+    <string name="active_section_dashboard">网关</string>
+    <string name="active_section_dashboard_sign_in_hint">从 Manage 登录以使用网关功能。</string>
     <string name="active_section_disabled">已禁用</string>
     <string name="active_section_disconnect">断开连接</string>
     <string name="active_section_enable_ws_http_for_dev">启用 ws:// 用于开发</string>
@@ -2668,12 +2668,12 @@
     <string name="power_gate_pair_again">重新配对</string>
     <string name="power_gate_unavailable">此服务器上不可用</string>
     <string name="power_gate_view_connection">查看连接</string>
-    <string name="power_gate_signin_required">需要仪表盘登录</string>
+    <string name="power_gate_signin_required">需要网关登录</string>
     <string name="power_gate_open_signin">打开登录</string>
     <string name="power_gate_explanation_pairing">此功能需要在您的 Hermes 服务器上安装 Relay 插件。</string>
     <string name="power_gate_explanation_expired">您的 Relay 会话已不被服务器接受。打开连接重新配对。</string>
     <string name="power_gate_explanation_unavailable">此 Hermes 服务器未暴露此功能所需的接口。</string>
-    <string name="power_gate_explanation_signin">此标准仪表盘功能需要在登录后才能使用。</string>
+    <string name="power_gate_explanation_signin">此标准网关功能需要在登录后才能使用。</string>
 
     <!-- ExtraKeysToolbar -->
     <string name="extra_keys_esc">ESC</string>
@@ -3169,7 +3169,7 @@
     <string name="cw_confirm_title_hermes">连接到 Hermes 服务器</string>
     <string name="cw_confirm_title_relay">配对 Relay</string>
     <string name="cw_dashboard_blank_hint">输入 Hermes 服务器的基础 URL 以连接。</string>
-    <string name="cw_dashboard_custom_hint">输入您的 Hermes 服务器仪表盘 URL。</string>
+    <string name="cw_dashboard_custom_hint">输入您的 Hermes 服务器网关 URL。</string>
     <string name="cw_dashboard_derived">从 API URL 衔生</string>
     <string name="cw_field_api_url">API URL</string>
     <string name="cw_hide_api_key">隐藏 API Key</string>
@@ -3180,12 +3180,12 @@
     <string name="cw_http_url_scheme_error">%1$s 应使用 http:// 或 https://（私有主机使用 http://；公共主机使用 https://）</string>
     <string name="cw_label_api_key">API Key</string>
     <string name="cw_label_api_server">API 服务器</string>
-    <string name="cw_label_dashboard">仪表盘</string>
+    <string name="cw_label_dashboard">网关</string>
     <string name="cw_label_grants">授权</string>
     <string name="cw_label_relay">Relay</string>
-    <string name="cw_lan_api_dashboard">API + 仪表盘</string>
+    <string name="cw_lan_api_dashboard">API + 网关</string>
     <string name="cw_lan_api_only">仅 API</string>
-    <string name="cw_lan_dashboard_only">仅仪表盘</string>
+    <string name="cw_lan_dashboard_only">仅网关</string>
     <string name="cw_lan_unknown">未知</string>
     <string name="cw_ordinal_fallback">%d.</string>
     <string name="cw_ordinal_fallback_n">%d.</string>
@@ -3198,9 +3198,9 @@
     <string name="cw_role_tailscale">Tailscale</string>
     <string name="cw_scan_failed">扫描失败</string>
     <string name="cw_scan_lan">扫描局域网</string>
-    <string name="cw_scan_result_api_dashboard">已选择 %1$s。局域网中的 API 和仪表盘均可访问。</string>
-    <string name="cw_scan_result_api_only">已选择 %1$s。API 可访问，但未在 :%2$d 找到仪表盘。</string>
-    <string name="cw_scan_result_dashboard_only">已选择 %1$s。已找到仪表盘，但无法在 :%2$d 访问 API。</string>
+    <string name="cw_scan_result_api_dashboard">已选择 %1$s。局域网中的 API 和网关均可访问。</string>
+    <string name="cw_scan_result_api_only">已选择 %1$s。API 可访问，但未在 :%2$d 找到网关。</string>
+    <string name="cw_scan_result_dashboard_only">已选择 %1$s。已找到网关，但无法在 :%2$d 访问 API。</string>
     <string name="cw_scan_result_unknown">已选择 %1$s。输入 API 密钥后连接。</string>
     <plurals name="cw_scan_summary_api_only">
         <item quantity="other">%1$d 个 API 端点</item>
@@ -3209,7 +3209,7 @@
         <item quantity="other">%1$d 台服务器</item>
     </plurals>
     <plurals name="cw_scan_summary_dashboard_only">
-        <item quantity="other">%1$d 个仪表盘</item>
+        <item quantity="other">%1$d 个网关</item>
     </plurals>
     <string name="cw_scan_summary_empty">在此网络中未找到 Hermes 服务器</string>
     <plurals name="cw_scan_summary_hosts">
@@ -3308,7 +3308,7 @@
     <string name="model_picker_count">%d 个模型</string>
     <string name="power_feature_back_desc">返回</string>
     <string name="power_feature_dashboard_signin_action">登录</string>
-    <string name="power_feature_dashboard_signin_explain">登录以访问仪表盘功能</string>
+    <string name="power_feature_dashboard_signin_explain">登录以访问网关功能</string>
     <string name="power_feature_dashboard_signin_label">需要登录</string>
     <string name="power_feature_pairing_expired_action">重新配对</string>
     <string name="power_feature_pairing_expired_explain">配对已过期，请重新配对</string>
@@ -4481,7 +4481,7 @@
     <string name="dashboard_address_required">输入 Hermes Gateway 地址</string>
     <string name="dashboard_gateway_configured">Configured address</string>
 <string name="dashboard_gateway_oidc_explainer">The configured route may be LAN, Tailscale, or public. Hermes owns the OIDC callback; Android does not require a second sign-in address.</string>
-<string name="dashboard_gateway_secure_origin">已认证的仪表盘地址</string>
+<string name="dashboard_gateway_secure_origin">已认证的网关地址</string>
     <string name="dashboard_gateway_title">Dashboard &amp; Gateway</string>
     <string name="dashboard_native_signin_embedded_fallback">Secure browser sign-in was unavailable, so Hermes opened its compatible in-app sign-in.</string>
     <string name="dashboard_oauth_canonical_origin">Hermes is signing in through %1$s. You’ll review this address before it is saved.</string>

@@ -156,40 +156,6 @@ fun ActiveCardStandardStatusSection(
         onClick = onOpenApiInfo,
         modifier = Modifier.fillMaxWidth(),
     )
-
-    ConnectionStatusRow(
-        label = stringResource(R.string.active_section_dashboard),
-        isConnected = dashboardStatus?.reachable == true && !dashboardSignInRequired,
-        statusText = when {
-            activeConnection?.resolvedDashboardUrl.isNullOrBlank() -> stringResource(R.string.active_section_not_configured)
-            dashboardStatus == null -> stringResource(R.string.active_section_not_checked)
-            !dashboardStatus.reachable -> stringResource(R.string.active_section_unreachable)
-            dashboardSignInRequired -> stringResource(R.string.active_section_sign_in_required)
-            dashboardStatus.authenticated == true -> stringResource(R.string.active_section_signed_in)
-            dashboardStatus.authRequired == false -> stringResource(R.string.active_section_available)
-            else -> stringResource(R.string.active_section_available)
-        },
-        onClick = onOpenDashboard,
-        modifier = Modifier.fillMaxWidth(),
-    )
-
-    if (dashboardSignInRequired) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.active_section_dashboard_sign_in_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
-            )
-            TextButton(onClick = onOpenDashboard) {
-                Text(stringResource(R.string.active_section_sign_in))
-            }
-        }
-    }
 }
 
 /**
@@ -387,7 +353,6 @@ fun ActiveCardFeaturesSection(
 
     // Pre-resolve labels for CapabilityRow
     val hermesApiLabel = stringResource(R.string.active_section_hermes_api)
-    val dashboardLabel = stringResource(R.string.active_section_dashboard)
     val hermesVoiceLabel = stringResource(R.string.active_section_hermes_voice)
     val relayToolsLabel = stringResource(R.string.active_section_relay_tools)
     val terminalLabel = stringResource(R.string.active_section_terminal)
@@ -408,14 +373,6 @@ fun ActiveCardFeaturesSection(
                 label = stringResource(R.string.conn_chat_label),
                 value = chatValue,
                 tone = chatTone,
-            )
-            CapabilityDivider()
-            CapabilityRow(
-                icon = Icons.Filled.Dashboard,
-                label = stringResource(R.string.conn_manage_label),
-                value = dashboardValue,
-                tone = dashboardTone,
-                onClick = onOpenDashboard,
             )
             CapabilityDivider()
             CapabilityRow(
@@ -1202,14 +1159,14 @@ fun ActiveCardSecurityPosture(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Dashboard,
+                        imageVector = Icons.Filled.Dns,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp),
                     )
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = stringResource(R.string.active_section_dashboard),
+                            text = stringResource(R.string.gateways_title),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         Text(
@@ -1646,14 +1603,14 @@ fun ActiveCardRoutesSection(
                             gatewayRoute.publicHttpViolation ->
                                 stringResource(R.string.transport_badge_insecure_public)
                             isRouteProbing -> stringResource(R.string.active_section_checking)
-                            dashboardReachable -> stringResource(R.string.active_section_dashboard_reachable)
+                            dashboardReachable -> stringResource(R.string.active_section_available)
                             activeDashboardOutcome != null ->
-                                stringResource(R.string.active_section_dashboard_unreachable)
+                                stringResource(R.string.active_section_unreachable)
                             !dashboardStatusAppliesToSelectedRoute ->
-                                stringResource(R.string.active_section_dashboard_not_checked)
+                                stringResource(R.string.active_section_not_checked)
                             connection.dashboardLastStatus == null ->
-                                stringResource(R.string.active_section_dashboard_not_checked)
-                            else -> stringResource(R.string.active_section_dashboard_unreachable)
+                                stringResource(R.string.active_section_not_checked)
+                            else -> stringResource(R.string.active_section_unreachable)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = if (gatewayRoute.publicHttpViolation) {

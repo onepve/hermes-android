@@ -605,7 +605,7 @@ internal fun gatewayRegistryRouteLabel(role: String, displayName: String? = null
     "lan" -> "LAN"
     "tailscale" -> "Tailscale"
     "public", "https" -> "Public"
-    "dashboard", "authenticated_dashboard" -> "Dashboard"
+    "dashboard", "authenticated_dashboard" -> "Gateway"
     "plugin_proxy", "plugin-proxy" -> "Hermes Secure Link"
     "outbound_broker", "broker", "relay_broker" -> "Hermes Reach"
     else -> displayName?.trim()?.takeIf { it.isNotBlank() }
@@ -699,16 +699,16 @@ internal fun resolveConnectionClarityPresentation(
     val activePath = when (currentSurface) {
         CurrentHermesSurface.Gateway -> if (canonicalDashboardOwnsGateway) {
             if (dashboardOrigin?.startsWith("https://", ignoreCase = true) == true) {
-                "HTTPS Dashboard"
+                "HTTPS Gateway"
             } else {
-                "Dashboard"
+                "Gateway"
             }
         } else {
             activeEndpoint?.displayLabel()
                 ?: if (dashboardOrigin?.startsWith("https://", ignoreCase = true) == true) {
-                    "HTTPS Dashboard"
+                    "HTTPS Gateway"
                 } else {
-                    "Dashboard"
+                    "Gateway"
                 }
         }
         CurrentHermesSurface.ApiFallback -> activeEndpoint?.displayLabel()

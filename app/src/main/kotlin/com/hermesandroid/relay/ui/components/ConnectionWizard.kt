@@ -1404,7 +1404,6 @@ internal enum class SetupQrDispatch { Dashboard, StandardApi, Relay }
 /** Keep setup QR routing aligned with the surface that owns its credentials. */
 internal fun setupQrDispatch(payload: HermesPairingPayload): SetupQrDispatch = when {
     payload.relay != null -> SetupQrDispatch.Relay
-    !payload.hasApiServer && !payload.dashboardUrl.isNullOrBlank() -> SetupQrDispatch.Dashboard
     else -> SetupQrDispatch.StandardApi
 }
 
@@ -2892,26 +2891,12 @@ private fun StandardSetupResultCard(
                 ok = result.apiReachable,
             )
             ReadinessLine(
-                label = stringResource(R.string.cw_manage),
-                detail = when {
-                    result.dashboardAuthenticated == true -> stringResource(R.string.cw_dashboard_signed_in)
-                    result.dashboardSignInRequired -> stringResource(R.string.cw_dashboard_sign_in_required)
-                    result.dashboardReachable == true -> stringResource(R.string.cw_dashboard_available)
-                    result.dashboardReachable == false -> stringResource(R.string.cw_dashboard_not_reachable)
-                    else -> stringResource(R.string.cw_dashboard_will_check)
-                },
-                ok = result.dashboardAuthenticated == true ||
-                    result.dashboardReachable == true && !result.dashboardSignInRequired,
-            )
-            ReadinessLine(
                 label = stringResource(R.string.cw_voice),
                 detail = when (result.voiceAvailability) {
                     StandardVoiceAvailability.Ready -> stringResource(R.string.cw_voice_ready)
-                    StandardVoiceAvailability.SignInRequired -> stringResource(R.string.cw_voice_sign_in_to_unlock)
                     StandardVoiceAvailability.Unsupported ->
                         stringResource(R.string.cw_voice_no_routes)
-                    StandardVoiceAvailability.Unreachable -> stringResource(R.string.cw_voice_after_dashboard)
-                    StandardVoiceAvailability.Unknown -> stringResource(R.string.cw_voice_after_connect)
+                    else -> stringResource(R.string.cw_voice_after_connect)
                 },
                 ok = result.voiceAvailability == StandardVoiceAvailability.Ready,
                 neutralWhenFalse = true,
@@ -2946,14 +2931,6 @@ private fun StandardSetupResultCard(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(stringResource(R.string.cw_start_chat))
-            }
-            if (result.dashboardSignInRequired && onManageSignIn != null) {
-                OutlinedButton(
-                    onClick = onManageSignIn,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(stringResource(R.string.cw_sign_in_to_manage))
-                }
             }
         }
     }
@@ -3477,27 +3454,14 @@ private fun ConfirmStep(
                         value = payload.serverUrl,
                         hint = stringResource(R.string.cw_hint_chat),
                     )
-                }
-                if (relayUrl == null) {
                     LabeledLine(
-                        label = stringResource(R.string.cw_label_dashboard),
-                        value = payload.dashboardUrl
-                            ?.trim()
-                            ?.takeIf { it.isNotBlank() }
-                            ?: Connection.deriveDefaultDashboardUrl(payload.serverUrl)
-                            ?: stringResource(R.string.cw_value_derived),
-                        hint = stringResource(R.string.cw_hint_manage),
+                        label = stringResource(R.string.cw_label_api_key),
+                        value = if (payload.key.isBlank()) {
+                            stringResource(R.string.cw_value_not_included)
+                        } else {
+                            stringResource(R.string.cw_value_included)
+                        },
                     )
-                    if (payload.hasApiServer) {
-                        LabeledLine(
-                            label = stringResource(R.string.cw_label_api_key),
-                            value = if (payload.key.isBlank()) {
-                                stringResource(R.string.cw_value_not_included)
-                            } else {
-                                stringResource(R.string.cw_value_included)
-                            },
-                        )
-                    }
                 }
                 if (relayUrl != null) {
                     LabeledLine(

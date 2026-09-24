@@ -360,16 +360,12 @@ private fun EndpointRow(
                     )
                 }
 
-                val dashboardSurfaceUrl = candidate.dashboard?.url
-                    ?: candidate.api?.url?.let(Connection::deriveDefaultDashboardUrl)
-                val dashboardLabel = stringResource(R.string.active_section_dashboard)
                 val apiLabel = stringResource(R.string.active_section_api_server)
                 val relayLabel = stringResource(R.string.active_section_relay)
                 val surfaceSummary = listOfNotNull(
                     candidate.proxy?.takeIf { candidate.hasSecureProxy() }?.let {
                         stringResource(R.string.secure_link_pinned_tls_short)
                     },
-                    dashboardSurfaceUrl?.let { "$dashboardLabel ${displayPort(it)}" },
                     candidate.api?.url?.let { "$apiLabel ${displayPort(it)}" },
                     candidate.relay?.url?.let { "$relayLabel ${displayPort(it)}" },
                 ).joinToString("  ·  ")
@@ -596,21 +592,6 @@ private fun RouteSurfaceMap(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(9.dp),
         ) {
-            RouteSurfaceRow(
-                label = stringResource(R.string.active_section_dashboard),
-                url = dashboardUrl,
-                status = when {
-                    dashboardSignInRequired -> stringResource(R.string.active_section_sign_in_required)
-                    dashboardAuthenticated == true -> stringResource(R.string.active_section_signed_in)
-                    else -> routeSurfaceRuntimeStatus(dashboardUrl, dashboardOutcome)
-                },
-                warning = dashboardSignInRequired || dashboardOutcome.isDefinitiveFailure(),
-                security = routeSurfaceSecurityPresentation(
-                    candidate,
-                    EndpointSurface.Dashboard,
-                    dashboardUrl,
-                ),
-            )
             RouteSurfaceRow(
                 label = stringResource(R.string.active_section_api_server),
                 url = apiUrl,

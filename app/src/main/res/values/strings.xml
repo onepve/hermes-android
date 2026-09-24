@@ -523,7 +523,7 @@
     <string name="cw_mixed_route_secure">%1$s uses HTTPS/WSS with transport encryption.</string>
     <string name="cw_mixed_safe">The app probes these routes and selects an available one. You can change the preferred route later.</string>
     <string name="cw_connecting_to_hermes">Connecting to Hermes</string>
-    <string name="cw_connecting_detail">Checking the API server, saved key, and dashboard.</string>
+    <string name="cw_connecting_detail">Checking the API server and credentials.</string>
     <string name="cw_pairing_title">Pairing…</string>
     <string name="cw_pair_in_progress">Working…</string>
     <string name="cw_pair_status_preparing_gateway">Preparing gateway…</string>
