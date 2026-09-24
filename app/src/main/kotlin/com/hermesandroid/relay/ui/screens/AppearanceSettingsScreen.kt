@@ -953,20 +953,6 @@ fun AppearanceSettingsScreen(
                         TextButton(onClick = { connectionViewModel.refreshAgentAvatars() }) {
                             Text(stringResource(R.string.appearance_rescan))
                         }
-                        TextButton(onClick = onBrowsePetdex) {
-                            Text(stringResource(R.string.appearance_browse_petdex))
-                        }
-                        TextButton(onClick = onCreatePet) {
-                            Icon(
-                                imageVector = Icons.Filled.AutoAwesome,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                            )
-                            Text(
-                                text = stringResource(R.string.appearance_create_pet),
-                                modifier = Modifier.padding(start = 6.dp),
-                            )
-                        }
                     }
 
                     Text(

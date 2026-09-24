@@ -2559,10 +2559,7 @@ fun ChatScreen(
                 onRefresh = { chatViewModel.refreshSessions() },
                 onLoadMore = { chatViewModel.loadMoreSessions() },
                 onRetryLoadMore = { chatViewModel.retryLoadMoreSessions() },
-                onOpenBotMode = {
-                    scope.launch { drawerState.close() }
-                    onNavigateToBotMode()
-                },
+                onOpenBotMode = null,
                 onNewChat = {
                     if (!supervised || supervisedPolicy.capabilities.newChat) {
                         chatViewModel.createNewChat()
@@ -3053,12 +3050,6 @@ fun ChatScreen(
                                 modifier = Modifier.padding(end = 4.dp),
                             )
                         }
-                        RelayChromeIconButton(
-                            icon = Icons.Filled.Code,
-                            contentDescription = stringResource(R.string.cd_terminal),
-                            onClick = onNavigateToTerminal,
-                            modifier = Modifier.padding(end = 4.dp),
-                        )
                     }
                     RelayChromeIconButton(
                         icon = Icons.Filled.Tune,

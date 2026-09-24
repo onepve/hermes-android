@@ -1,6 +1,6 @@
 [versions]
-appVersionName = "1.17.2"
-appVersionCode = "59"
+appVersionName = "1.17.3"
+appVersionCode = "60"
 agp = "9.4.0"
 kotlin = "2.4.10"
 compose-bom = "2026.08.00"

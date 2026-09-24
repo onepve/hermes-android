@@ -655,30 +655,7 @@ fun SettingsScreen(
                 isDarkTheme = isDarkTheme,
             )
 
-            SettingsCategoryRow(
-                icon = Icons.Filled.Code,
-                title = stringResource(R.string.settings_terminal),
-                subtitle = stringResource(R.string.settings_terminal_desc),                onClick = onNavigateToTerminal,
-                isDarkTheme = isDarkTheme,
-            )
-
-            SettingsCategoryRow(
-                icon = Icons.Filled.PhoneAndroid,
-                title = if (BuildFlavor.isSideload) stringResource(R.string.settings_bridge) else stringResource(R.string.settings_bridge_core),
-                subtitle = if (BuildFlavor.isSideload) {
-                    stringResource(R.string.settings_bridge_desc)
-                } else {
-                    stringResource(R.string.settings_bridge_core_desc)
-                },                onClick = onNavigateToBridge,
-                isDarkTheme = isDarkTheme,
-            )
-
-            SettingsCategoryRow(
-                icon = Icons.Filled.Devices,
-                title = stringResource(R.string.settings_relay_sessions),
-                subtitle = stringResource(R.string.settings_relay_sessions_desc),                onClick = onNavigateToPairedDevices,
-                isDarkTheme = isDarkTheme,
-            )
+            // Terminal, Bridge and Relay sessions removed for clean lightweight AI client
 
             // === PHASE3-notif-listener-followup: notification companion entry-point ===
             SettingsCategoryRow(

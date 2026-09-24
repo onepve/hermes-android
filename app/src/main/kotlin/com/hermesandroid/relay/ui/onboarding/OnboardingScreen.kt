@@ -88,12 +88,7 @@ import kotlinx.coroutines.launch
 internal enum class OnboardingPage { Welcome, Chat, Manage, Power, Connect, Permissions }
 
 internal val standardOnboardingPages = listOf(
-    OnboardingPage.Welcome,
-    OnboardingPage.Chat,
-    OnboardingPage.Manage,
-    OnboardingPage.Power,
     OnboardingPage.Connect,
-    OnboardingPage.Permissions,
 )
 
 internal enum class OnboardingNotificationAction {
@@ -265,17 +260,9 @@ fun OnboardingScreen(
                         )
                         OnboardingPage.Connect -> ConnectPage(
                             connectionViewModel = connectionViewModel,
-                            onComplete = {
-                                notificationsPermitted =
-                                    AppPermissionStatusProbe.snapshot(context).notificationsPermitted
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(
-                                        pages.indexOf(OnboardingPage.Permissions),
-                                    )
-                                }
-                            },
+                            onComplete = onComplete,
                             onManageSignIn = onManageSignIn,
-                            onSkip = { showSkipConfirm = true },
+                            onSkip = onComplete,
                             onTryDemo = onTryDemo,
                         )
                         OnboardingPage.Permissions -> PermissionSetupPage(
