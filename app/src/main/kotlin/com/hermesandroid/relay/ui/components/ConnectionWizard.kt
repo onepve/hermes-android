@@ -2686,44 +2686,6 @@ private fun StandardEntryStep(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Column(
-                modifier = Modifier.padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.cw_dashboard),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-                Text(
-                    text = effectiveDashboardUrl ?: stringResource(R.string.cw_dashboard_derived),
-                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = if (dashboardUrl.isBlank()) {
-                        stringResource(R.string.cw_dashboard_blank_hint, Connection.DEFAULT_DASHBOARD_PORT)
-                    } else {
-                        stringResource(R.string.cw_dashboard_custom_hint)
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                if (tailscaleApiUrl.isNotBlank()) {
-                    Text(
-                        text = stringResource(R.string.cw_dashboard_routes_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-        }
-
         TextButton(
             onClick = { advancedExpanded = !advancedExpanded },
             modifier = Modifier.fillMaxWidth(),
@@ -2739,58 +2701,20 @@ private fun StandardEntryStep(
 
         if (advancedExpanded) {
             OutlinedTextField(
-                value = dashboardUrl,
-                onValueChange = onDashboardUrlChange,
-                label = { Text(stringResource(R.string.cw_dashboard_url_override)) },
-                placeholder = { Text(stringResource(R.string.cw_dashboard_url_placeholder, Connection.DEFAULT_DASHBOARD_PORT)) },
+                value = scanApiPort,
+                onValueChange = { scanApiPort = it.filter(Char::isDigit).take(5) },
+                label = { Text(stringResource(R.string.cw_api_port)) },
+                placeholder = { Text("8642") },
                 singleLine = true,
-                isError = dashboardError != null,
+                isError = parsedScanApiPort == null,
                 supportingText = {
-                    Text(
-                        text = dashboardError ?: stringResource(R.string.cw_dashboard_url_supporting)
-                    )
+                    Text(stringResource(R.string.cw_port_scan_hint))
                 },
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
-                    autoCorrectEnabled = false,
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
                 ),
                 modifier = Modifier.fillMaxWidth(),
-            )
-
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                OutlinedTextField(
-                    value = scanApiPort,
-                    onValueChange = { scanApiPort = it.filter(Char::isDigit).take(5) },
-                    label = { Text(stringResource(R.string.cw_api_port)) },
-                    singleLine = true,
-                    isError = parsedScanApiPort == null,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next,
-                    ),
-                    modifier = Modifier.weight(1f),
-                )
-                OutlinedTextField(
-                    value = scanDashboardPort,
-                    onValueChange = { scanDashboardPort = it.filter(Char::isDigit).take(5) },
-                    label = { Text(stringResource(R.string.cw_dashboard_port)) },
-                    singleLine = true,
-                    isError = parsedScanDashboardPort == null,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            Text(
-                text = stringResource(R.string.cw_port_scan_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -2909,16 +2833,6 @@ private fun StandardSetupResultCard(
                     stringResource(R.string.cw_remote_lan_only)
                 },
                 ok = result.remoteRouteConfigured,
-                neutralWhenFalse = true,
-            )
-            ReadinessLine(
-                label = stringResource(R.string.cw_relay),
-                detail = if (result.relayPaired) {
-                    stringResource(R.string.cw_relay_paired)
-                } else {
-                    stringResource(R.string.cw_relay_optional)
-                },
-                ok = result.relayPaired,
                 neutralWhenFalse = true,
             )
             Text(

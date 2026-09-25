@@ -1085,7 +1085,7 @@ private fun VoiceForThisProfileCard(
                     label = stringResource(R.string.voice_settings_route_auto),
                     detail = stringResource(R.string.voice_settings_route_auto_desc),
                     status = autoStatus,
-                    statusOk = relayVoiceReady || standardOk,
+                    statusOk = standardOk,
                 ),
                 RouteOption(
                     route = VoiceAudioRoute.Standard,
@@ -1093,14 +1093,6 @@ private fun VoiceForThisProfileCard(
                     detail = stringResource(R.string.voice_settings_route_hermes_desc),
                     status = standardStatus,
                     statusOk = standardOk,
-                ),
-                RouteOption(
-                    route = VoiceAudioRoute.Relay,
-                    label = stringResource(R.string.voice_settings_route_relay),
-                    detail = stringResource(R.string.voice_settings_route_relay_desc),
-                    status = relayStatus,
-                    statusOk = relayVoiceReady,
-                    badge = stringResource(R.string.voice_settings_optional),
                 ),
             ).forEach { option ->
                 // Auto always stays selectable (it self-resolves to whatever's
@@ -5138,9 +5130,8 @@ private fun VoiceModePickerDialog(
                     listOf(
                         VoiceAudioRoute.Auto to "Automatic",
                         VoiceAudioRoute.Standard to stringResource(R.string.voice_provider_standard),
-                        VoiceAudioRoute.Relay to "Relay voice output",
                     ).forEach { (route, label) ->
-                        val available = route != VoiceAudioRoute.Relay || relayVoiceReady
+                        val available = true
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()

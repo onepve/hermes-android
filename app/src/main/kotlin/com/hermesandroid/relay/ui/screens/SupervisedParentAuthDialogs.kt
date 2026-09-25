@@ -112,8 +112,8 @@ internal fun SupervisedParentVerifyDialog(
     ) {
         when (inputType) {
             SupervisedParentCredentialType.Pin -> PinEntryScreen(
-                title = "Parent PIN",
-                subtitle = "Enter your 6-digit PIN.",
+                title = "家长 PIN 码",
+                subtitle = "请输入您的 6 位 PIN 码。",
                 busy = busy,
                 error = error,
                 onComplete = ::verify,
@@ -126,8 +126,8 @@ internal fun SupervisedParentVerifyDialog(
                 onUseRecovery = onUseRecoveryCode,
             )
             else -> CredentialChoiceScreen(
-                title = "How do you enter your parent credential?",
-                subtitle = "This existing setup predates the PIN/password choice.",
+                title = "您想如何输入家长凭据？",
+                subtitle = "当前设置早于 PIN 码/密码选项。",
                 onSelected = { selectedLegacyType = it },
             )
         }
@@ -205,28 +205,28 @@ internal fun SupervisedParentSetupDialog(
                     ?: legacyInputType
                 when (inputType) {
                     SupervisedParentCredentialType.Pin -> PinEntryScreen(
-                        title = "Current parent PIN",
-                        subtitle = "Confirm before changing parent access.",
+                        title = "当前家长 PIN 码",
+                        subtitle = "修改家长访问权限前请先确认。",
                         busy = busy,
                         error = error,
                         onComplete = ::verifyCurrent,
                     )
                     SupervisedParentCredentialType.Password -> PasswordVerifyScreen(
-                        title = "Current parent password",
+                        title = "当前家长密码",
                         busy = busy,
                         error = error,
                         onSubmit = ::verifyCurrent,
                     )
                     else -> CredentialChoiceScreen(
-                        title = "How do you enter the current credential?",
-                        subtitle = "Choose the input that matches the existing setup.",
+                        title = "您想如何输入当前凭据？",
+                        subtitle = "选择与现有设置匹配的输入方式。",
                         onSelected = { legacyInputType = it },
                     )
                 }
             }
             SetupStage.Choose -> CredentialChoiceScreen(
-                title = if (currentSecretRequired) "Choose new parent access" else "Choose parent access",
-                subtitle = "Pick one way to unlock parent settings. You can change it later.",
+                title = if (currentSecretRequired) "选择新的家长访问权限" else "选择家长访问权限",
+                subtitle = "选择一种解锁家长设置的方式，稍后可随时更改。",
                 onSelected = {
                     credentialType = it
                     stage = if (it == SupervisedParentCredentialType.Pin) SetupStage.Pin else SetupStage.Password
@@ -297,8 +297,8 @@ internal fun SupervisedParentRecoveryDialog(
                 onContinue = { stage = RecoveryStage.Choose },
             )
             RecoveryStage.Choose -> CredentialChoiceScreen(
-                title = "Choose new parent access",
-                subtitle = "Your recovery phrase will be replaced after reset.",
+                title = "选择新的家长访问权限",
+                subtitle = "重置后，您的恢复密语将被替换。",
                 onSelected = {
                     credentialType = it
                     stage = if (it == SupervisedParentCredentialType.Pin) RecoveryStage.Pin
@@ -328,11 +328,11 @@ internal fun SupervisedParentRecoveryCodeDialog(
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, enrollment.recoveryPhrase)
                 }
-                context.startActivity(Intent.createChooser(intent, "Share recovery phrase"))
+                context.startActivity(Intent.createChooser(intent, "分享恢复密语"))
             },
             onCopy = {
                 clipboard.setPrimaryClip(
-                    ClipData.newPlainText("Parent recovery phrase", enrollment.recoveryPhrase),
+                    ClipData.newPlainText("家长恢复密语", enrollment.recoveryPhrase),
                 )
             },
             onDone = onDone,
@@ -431,20 +431,20 @@ internal fun CredentialChoiceScreen(
         Spacer(Modifier.height(28.dp))
         CredentialChoiceRow(
             icon = { Icon(Icons.Filled.Dialpad, contentDescription = null) },
-            title = "Use a PIN",
-            subtitle = "Fast on this phone · 6 digits",
+            title = "使用 PIN 码",
+            subtitle = "在本机快速解锁 · 6 位数字",
             onClick = { onSelected(SupervisedParentCredentialType.Pin) },
         )
         Spacer(Modifier.height(12.dp))
         CredentialChoiceRow(
             icon = { Icon(Icons.Filled.Lock, contentDescription = null) },
-            title = "Use a password",
-            subtitle = "Works with password managers · 8+ characters",
+            title = "使用密码",
+            subtitle = "支持密码管理器 · 8 位以上字符",
             onClick = { onSelected(SupervisedParentCredentialType.Password) },
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            "PIN and password are separate choices.",
+            "PIN 码与密码为独立选项。",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -516,7 +516,7 @@ internal fun PinEntryScreen(
         )
         AuthError(error)
         onUseRecovery?.let {
-            TextButton(enabled = !busy, onClick = it) { Text("Use recovery phrase") }
+            TextButton(enabled = !busy, onClick = it) { Text("使用恢复密语") }
         }
     }
 }
@@ -535,8 +535,8 @@ internal fun PinSetupScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AuthHeading(
-            if (firstPin == null) "Create a parent PIN" else "Confirm parent PIN",
-            if (firstPin == null) "Choose a 6-digit PIN." else "Enter the same 6 digits again.",
+            if (firstPin == null) "创建家长 PIN 码" else "确认家长 PIN 码",
+            if (firstPin == null) "请选择 6 位数字 PIN 码。" else "请再次输入相同的 6 位数字。",
         )
         Spacer(Modifier.height(28.dp))
         PinDots(pin.length)
@@ -587,7 +587,7 @@ private fun NumericKeypad(
                 color = MaterialTheme.colorScheme.surfaceVariant,
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = "Delete digit")
+                    Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = "删除数字")
                 }
             }
         }
@@ -641,11 +641,11 @@ internal fun PasswordSetupScreen(
         modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AuthHeading("Create a parent password", "Use 8 or more characters.")
+        AuthHeading("创建家长密码", "Use 8 or more characters.")
         Spacer(Modifier.height(28.dp))
-        PasswordField("Password", password, { password = it; localError = null }, reveal, { reveal = !reveal })
+        PasswordField("密码", password, { password = it; localError = null }, reveal, { reveal = !reveal })
         Spacer(Modifier.height(12.dp))
-        PasswordField("Confirm password", confirmation, { confirmation = it; localError = null }, reveal, { reveal = !reveal }, ImeAction.Done)
+        PasswordField("确认密码", confirmation, { confirmation = it; localError = null }, reveal, { reveal = !reveal }, ImeAction.Done)
         AuthError(localError ?: error)
         Spacer(Modifier.height(20.dp))
         Button(
@@ -661,13 +661,13 @@ internal fun PasswordSetupScreen(
                     else -> onComplete(password)
                 }
             },
-        ) { Text(if (busy) "Saving…" else "Continue") }
+        ) { Text(if (busy) "Saving…" else "继续") }
     }
 }
 
 @Composable
 internal fun PasswordVerifyScreen(
-    title: String = "Parent password",
+    title: String = "家长密码",
     busy: Boolean,
     error: String?,
     onSubmit: (String) -> Unit,
@@ -679,9 +679,9 @@ internal fun PasswordVerifyScreen(
         modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AuthHeading(title, "Enter your password.")
+        AuthHeading(title, "请输入您的密码。")
         Spacer(Modifier.height(28.dp))
-        PasswordField("Password", password, { password = it }, reveal, { reveal = !reveal }, ImeAction.Done)
+        PasswordField("密码", password, { password = it }, reveal, { reveal = !reveal }, ImeAction.Done)
         AuthError(error)
         Spacer(Modifier.height(20.dp))
         Button(
@@ -690,7 +690,7 @@ internal fun PasswordVerifyScreen(
             onClick = { onSubmit(password) },
         ) { Text(if (busy) "Checking…" else "Unlock") }
         onUseRecovery?.let {
-            TextButton(enabled = !busy, onClick = it) { Text("Use recovery phrase") }
+            TextButton(enabled = !busy, onClick = it) { Text("使用恢复密语") }
         }
     }
 }
@@ -715,7 +715,7 @@ private fun PasswordField(
             IconButton(onClick = onReveal) {
                 Icon(
                     if (reveal) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                    contentDescription = if (reveal) "Hide password" else "Show password",
+                    contentDescription = if (reveal) "隐藏密码" else "显示密码",
                 )
             }
         },
@@ -734,7 +734,7 @@ private fun RecoveryPhraseInputScreen(
         modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AuthHeading("Enter recovery phrase", "Paste or type the six words.")
+        AuthHeading("输入恢复密语", "Paste or type the six words.")
         Spacer(Modifier.height(28.dp))
         OutlinedTextField(
             value = value,
@@ -750,7 +750,7 @@ private fun RecoveryPhraseInputScreen(
             enabled = value.isNotBlank(),
             modifier = Modifier.fillMaxWidth().height(52.dp),
             onClick = onContinue,
-        ) { Text("Continue") }
+        ) { Text("继续") }
     }
 }
 
@@ -812,8 +812,8 @@ internal fun SupervisedParentRecoveryCodeContent(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth().height(52.dp),
             onClick = onCopy,
-        ) { Text("Copy phrase") }
-        TextButton(onClick = onDone) { Text("Done") }
+        ) { Text("复制密语") }
+        TextButton(onClick = onDone) { Text("完成") }
     }
 }
 
@@ -843,20 +843,20 @@ private fun SupervisedParentAuthResult.toUserMessage(): String = when (this) {
     is SupervisedParentAuthResult.Invalid -> if (attemptsBeforeDelay > 0) {
         "Incorrect parent credential. $attemptsBeforeDelay attempts remain before a delay."
     } else {
-        "Incorrect parent credential."
+        "家长凭据不正确。"
     }
     is SupervisedParentAuthResult.Throttled -> {
         val seconds = ((retryAfterMillis + 999L) / 1_000L).coerceAtLeast(1)
-        "Too many attempts. Try again in $seconds seconds."
+        "尝试次数过多。请在 "$seconds seconds."
     }
-    SupervisedParentAuthResult.Missing -> "Parent access has not been set up."
-    SupervisedParentAuthResult.Corrupt -> "Parent access data is unavailable. Supervised Mode remains locked."
+    SupervisedParentAuthResult.Missing -> "尚未设置家长访问权限。"
+    SupervisedParentAuthResult.Corrupt -> "家长权限数据不可用，受监督模式保持锁定。"
 }
 
 private fun Throwable.toUserMessage(): String = when (this) {
     is IllegalArgumentException -> message ?: "The new parent credential is not valid."
     is SupervisedParentAuthStore.ParentAuthenticationException -> authResult.toUserMessage()
-    else -> "Parent access could not be updated. Try again."
+    else -> "无法更新家长访问权限，请重试。"
 }
 
 private enum class SetupStage { VerifyCurrent, Choose, Pin, Password }

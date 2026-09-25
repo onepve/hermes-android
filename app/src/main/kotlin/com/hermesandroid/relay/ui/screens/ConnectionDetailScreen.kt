@@ -526,19 +526,6 @@ private fun ActiveOverview(
         StandardVoiceAvailability.Unknown ->
             OverviewStatus(stringResource(R.string.active_section_checking), OverviewTone.Neutral)
     }
-    val relayStatus = when (relayUiState) {
-        RelayUiState.NotConfigured ->
-            OverviewStatus(stringResource(R.string.relay_state_optional), OverviewTone.Neutral)
-        RelayUiState.Connected ->
-            OverviewStatus(stringResource(R.string.relay_state_ready), OverviewTone.Good)
-        RelayUiState.Connecting ->
-            OverviewStatus(stringResource(R.string.relay_state_reconnecting), OverviewTone.Info)
-        RelayUiState.Stale,
-        RelayUiState.Disconnected ->
-            OverviewStatus(stringResource(R.string.relay_state_unavailable), OverviewTone.Warning)
-        RelayUiState.Expired ->
-            OverviewStatus(stringResource(R.string.relay_state_needs_repair), OverviewTone.Warning)
-    }
     val apiStatus = when (
         resolveOptionalApiPresentation(
             gatewayReady = gatewayAvailability == GatewayAvailability.Ready,
@@ -594,15 +581,6 @@ private fun ActiveOverview(
         status = apiStatus,
         onClick = onOpenApiInfo,
     )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        if (relayUiState == RelayUiState.Stale) {
-            Button(onClick = onReconnect) { Text(stringResource(R.string.detail_reconnect)) }
-        }
-    }
 }
 
 private enum class OverviewTone { Neutral, Good, Info, Warning }

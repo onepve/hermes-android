@@ -336,12 +336,13 @@ private fun parseHermesRelayQr(raw: String): HermesPairingPayload? {
         val keyAlias = firstString(obj, "key", "api_key", "apiKey")
         val apiUrlAlias = firstString(obj, "api_url", "apiUrl", "server_url", "serverUrl", "url")
 
-        val uriFromApiUrl = if (decoded.host.isBlank() && !apiUrlAlias.isNullOrBlank()) {
+        val uriFromApiUrl = if (!apiUrlAlias.isNullOrBlank()) {
             runCatching { URI(apiUrlAlias) }.getOrNull()
         } else null
         val hostFromUrl = uriFromApiUrl?.host.orEmpty()
         val portFromUrl = uriFromApiUrl?.let { if (it.port > 0) it.port else if (it.scheme.equals("https", ignoreCase = true)) 443 else 80 } ?: 8642
-        val tlsFromUrl = uriFromApiUrl?.scheme.equals("https", ignoreCase = true)
+        val tlsFromUrl = uriFromApiUrl?.scheme.equals("https", ignoreCase = true) == true
+        val explicitTls = obj["tls"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull()
 
         var decodedWithAliases = decoded
         if (decodedWithAliases.dashboardUrl.isNullOrBlank() && dashboardAlias != null) {
@@ -350,13 +351,14 @@ private fun parseHermesRelayQr(raw: String): HermesPairingPayload? {
         if (decodedWithAliases.key.isBlank() && !keyAlias.isNullOrBlank()) {
             decodedWithAliases = decodedWithAliases.copy(key = keyAlias)
         }
-        if (decodedWithAliases.host.isBlank() && hostFromUrl.isNotBlank()) {
-            decodedWithAliases = decodedWithAliases.copy(
-                host = hostFromUrl,
-                port = portFromUrl,
-                tls = tlsFromUrl,
-            )
-        }
+        val effectiveHost = if (decodedWithAliases.host.isNotBlank()) decodedWithAliases.host else hostFromUrl
+        val effectivePort = if (decodedWithAliases.port > 0 && decodedWithAliases.port != 8642) decodedWithAliases.port else portFromUrl
+        val effectiveTls = explicitTls ?: if (tlsFromUrl) true else decodedWithAliases.tls
+        decodedWithAliases = decodedWithAliases.copy(
+            host = effectiveHost,
+            port = effectivePort,
+            tls = effectiveTls,
+        )
 
         if (decodedWithAliases.host.isBlank() &&
             !decodedWithAliases.hasDashboardRelayIdentity()
@@ -423,12 +425,7 @@ private fun parseGenericApiJsonQr(raw: String): HermesPairingPayload? {
         val obj = json.decodeFromString<JsonObject>(raw)
         val host = firstString(obj, "host", "hostname")
         val port = obj["port"]?.jsonPrimitive?.contentOrNull?.toIntOrNull() ?: 8642
-        val tls = obj["tls"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() ?: false
-        val constructedUrl = if (!host.isNullOrBlank()) {
-            val scheme = if (tls) "https" else "http"
-            "$scheme://$host:$port"
-        } else null
-
+        val explicitTls = obj["tls"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull()
         val apiUrl = firstString(
             obj,
             "api_url",
@@ -436,10 +433,18 @@ private fun parseGenericApiJsonQr(raw: String): HermesPairingPayload? {
             "server_url",
             "serverUrl",
             "url",
-        ) ?: constructedUrl ?: return null
+        )
+        val schemeFromUrl = apiUrl?.let { runCatching { URI(it).scheme?.lowercase() }.getOrNull() }
+        val tls = explicitTls ?: (schemeFromUrl == "https")
+        val constructedUrl = if (!host.isNullOrBlank()) {
+            val scheme = if (tls) "https" else "http"
+            "$scheme://$host:$port"
+        } else null
+
+        val finalApiUrl = apiUrl ?: constructedUrl ?: return null
         val apiKey = firstString(obj, "api_key", "apiKey", "key").orEmpty()
         val dashboardUrl = firstString(obj, "dashboard_url", "dashboardUrl")
-        payloadFromApiUrl(apiUrl, apiKey, dashboardUrl)
+        payloadFromApiUrl(finalApiUrl, apiKey, dashboardUrl)
     } catch (_: Exception) {
         null
     }

@@ -139,7 +139,7 @@ fun SupervisedSettingsScreen(
                         }
                     }
                 },
-                title = { Text("Settings") },
+                title = { Text("设置") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                 ),
@@ -168,10 +168,10 @@ fun SupervisedSettingsScreen(
                 isDarkTheme = isDarkTheme,
             )
 
-            SupervisedSectionLabel("Appearance")
+            SupervisedSectionLabel("外观")
             SupervisedNavigationRow(
                 icon = Icons.Filled.Palette,
-                title = "Appearance",
+                title = "外观",
                 subtitle = "Supervised theme and approved agent look",
                 onClick = onNavigateToAppearance,
                 isDarkTheme = isDarkTheme,
@@ -181,7 +181,7 @@ fun SupervisedSettingsScreen(
             SupervisedNavigationRow(
                 icon = Icons.Filled.Info,
                 title = "About Hermes Relay",
-                subtitle = "About this supervised client",
+                subtitle = "关于此受监督客户端",
                 onClick = { showAbout = true },
                 isDarkTheme = isDarkTheme,
             )
@@ -189,7 +189,7 @@ fun SupervisedSettingsScreen(
             SupervisedSectionLabel("Parent")
             SupervisedNavigationRow(
                 icon = Icons.Filled.Lock,
-                title = "Parent access",
+                title = "家长控制权限",
                 subtitle = "Unlock full settings with the app parent PIN or password",
                 onClick = ::requestParentAccess,
                 isDarkTheme = isDarkTheme,
@@ -275,7 +275,7 @@ fun SupervisedAppearanceSettingsScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                title = { Text("Appearance") },
+                title = { Text("外观") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                 ),
@@ -303,7 +303,7 @@ fun SupervisedAppearanceSettingsScreen(
                 policy.appearance.allowProfileIconChanges ||
                 policy.appearance.allowBackgroundChanges
             ) {
-                SupervisedSectionLabel("Agent look")
+                SupervisedSectionLabel("智能体外观")
                 SupervisedCard(isDarkTheme) {
                     SupervisedAgentLookControls(
                         connectionViewModel = connectionViewModel,
@@ -350,7 +350,7 @@ fun SupervisedControlsScreen(
 
     fun requestFirstEnable() {
         if (!policy.isConfigured) {
-            enableAuthError = "Choose an agent profile before enabling Supervised Mode."
+            enableAuthError = "启用受监督模式前，请先指定智能体资料。"
             return
         }
         when (parentAuthStatus) {
@@ -374,7 +374,7 @@ fun SupervisedControlsScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                title = { Text("Supervised mode") },
+                title = { Text("受监督模式") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                 ),
@@ -394,7 +394,7 @@ fun SupervisedControlsScreen(
                     title = "Use supervised mode",
                     subtitle = when {
                         policy.pinnedProfileName.isNullOrBlank() ->
-                            "Choose an agent profile before enabling"
+                            "启用前请先选择智能体资料"
                         parentAuthStatus == SupervisedParentAuthStatus.Missing ->
                             "Set an app-specific parent PIN or password"
                         else ->
@@ -502,13 +502,13 @@ fun SupervisedControlsScreen(
                 )
             }
 
-            SupervisedSectionLabel("Allowed features")
+            SupervisedSectionLabel("允许的功能")
             SupervisedCard(isDarkTheme) {
-                SupervisedSwitchRow("Attachments", "Allow only the approved file types below", policy.capabilities.attachments) {
+                SupervisedSwitchRow("附件支持", "仅允许下方已核准的文件类型", policy.capabilities.attachments) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(attachments = it)))
                 }
                 HorizontalDivider()
-                SupervisedSwitchRow("Voice", "Allow standard Hermes voice", policy.capabilities.voice) {
+                SupervisedSwitchRow("Voice", "允许使用标准 Hermes 语音", policy.capabilities.voice) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(voice = it)))
                 }
                 HorizontalDivider()
@@ -516,16 +516,16 @@ fun SupervisedControlsScreen(
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(generatedImages = it)))
                 }
                 HorizontalDivider()
-                SupervisedSwitchRow("Conversation history", "Allow previous chats with this agent", policy.capabilities.conversationHistory) {
+                SupervisedSwitchRow("Conversation history", "允许查看与此智能体的过往聊天", policy.capabilities.conversationHistory) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(conversationHistory = it)))
                 }
                 HorizontalDivider()
-                SupervisedSwitchRow("Share generated images", "Allow Android sharing and saving", policy.capabilities.shareGeneratedImages) {
+                SupervisedSwitchRow("Share generated images", "允许 Android 系统分享与保存", policy.capabilities.shareGeneratedImages) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(shareGeneratedImages = it)))
                 }
                 if (policy.capabilities.attachments) {
                     HorizontalDivider()
-                    Text("Attachment count", style = MaterialTheme.typography.titleSmall)
+                    Text("附件数量限制", style = MaterialTheme.typography.titleSmall)
                     val countOptions = listOf(1, 2, 4, 8)
                     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                         countOptions.forEachIndexed { index, count ->
@@ -544,7 +544,7 @@ fun SupervisedControlsScreen(
                             ) { Text(count.toString()) }
                         }
                     }
-                    Text("Maximum size per attachment", style = MaterialTheme.typography.titleSmall)
+                    Text("单附件最大体积", style = MaterialTheme.typography.titleSmall)
                     val sizeOptions = listOf(5, 10, 25, 50)
                     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                         sizeOptions.forEachIndexed { index, sizeMb ->
@@ -563,7 +563,7 @@ fun SupervisedControlsScreen(
                             ) { Text("$sizeMb MB") }
                         }
                     }
-                    Text("Attachment types", style = MaterialTheme.typography.titleSmall)
+                    Text("允许的附件类型", style = MaterialTheme.typography.titleSmall)
                     SupervisedAttachmentCategory.entries.forEach { category ->
                         val enabled = category in policy.capabilities.attachmentCategories
                         SupervisedSwitchRow(
@@ -595,7 +595,7 @@ fun SupervisedControlsScreen(
                 CapabilitySwitch("New chat", policy.capabilities.newChat) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(newChat = it)))
                 }
-                CapabilitySwitch("Cancel response", policy.capabilities.cancelResponse) {
+                CapabilitySwitch("中断生成", policy.capabilities.cancelResponse) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(cancelResponse = it)))
                 }
                 CapabilitySwitch("Steer response", policy.capabilities.steerResponse) {
@@ -648,7 +648,7 @@ fun SupervisedControlsScreen(
                                     ),
                                 )
                             },
-                            label = { Text("Allow all") },
+                            label = { Text("允许全部") },
                         )
                         FilterChip(
                             selected = actions.noneEnabled,
@@ -661,7 +661,7 @@ fun SupervisedControlsScreen(
                                     ),
                                 )
                             },
-                            label = { Text("Allow none") },
+                            label = { Text("全部禁止") },
                         )
                     }
                     SessionActionSwitch("Pin and unpin", actions.pin) {
@@ -699,7 +699,7 @@ fun SupervisedControlsScreen(
                 Text(
                     when (policy.visibility.preset) {
                         SupervisedVisibilityPreset.Simple -> "Conversation only, with minimal technical detail"
-                        SupervisedVisibilityPreset.Transparent -> "Adds status, timestamps, and useful context"
+                        SupervisedVisibilityPreset.Transparent -> "显示状态、时间戳及上下文调试信息"
                         SupervisedVisibilityPreset.Custom -> "Choose each visible surface below"
                     },
                     style = MaterialTheme.typography.bodySmall,
@@ -707,7 +707,7 @@ fun SupervisedControlsScreen(
                 )
                 if (policy.visibility.preset == SupervisedVisibilityPreset.Custom) {
                     HorizontalDivider()
-                    VisibilitySwitch("Agent name and avatar", policy.visibility.showAgentIdentity) {
+                    VisibilitySwitch("智能体名称与头像", policy.visibility.showAgentIdentity) {
                         onPolicyChange(policy.copy(visibility = policy.visibility.copy(showAgentIdentity = it)))
                     }
                     VisibilitySwitch("Model name", policy.visibility.showModelName) {
@@ -743,7 +743,7 @@ fun SupervisedControlsScreen(
                 }
             }
 
-            SupervisedSectionLabel("Parent access")
+            SupervisedSectionLabel("家长控制权限")
             SupervisedCard(isDarkTheme) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -752,10 +752,10 @@ fun SupervisedControlsScreen(
                         tint = MaterialTheme.colorScheme.primary,
                     )
                     Column(Modifier.padding(start = 12.dp)) {
-                        Text("App parent credential", style = MaterialTheme.typography.titleSmall)
+                        Text("家长控制凭据", style = MaterialTheme.typography.titleSmall)
                         Text(
                             when (parentAuthStatus) {
-                                SupervisedParentAuthStatus.Configured -> "A parent PIN or password is configured for this app."
+                                SupervisedParentAuthStatus.Configured -> "已为此应用配置家长 PIN 码或密码。"
                                 SupervisedParentAuthStatus.Missing -> "Set a parent PIN or password before enabling Supervised Mode."
                                 SupervisedParentAuthStatus.Corrupt -> "Parent access data is unavailable and fails closed."
                                 null -> "Loading parent access…"
@@ -771,17 +771,17 @@ fun SupervisedControlsScreen(
                             enableAfterEnrollment = false
                             parentAuthDialog = ParentAuthDialog.Setup
                         },
-                    ) { Text("Set parent PIN or password") }
+                    ) { Text("设置家长 PIN 码或密码") }
                     SupervisedParentAuthStatus.Configured -> {
                         OutlinedButton(onClick = { parentAuthDialog = ParentAuthDialog.Change }) {
-                            Text("Change parent PIN or password")
+                            Text("修改家长 PIN 码或密码")
                         }
                         TextButton(onClick = { parentAuthDialog = ParentAuthDialog.Recovery }) {
-                            Text("Reset with recovery phrase")
+                            Text("使用恢复密语重置")
                         }
                         TextButton(onClick = { showRemoveCredentialConfirm = true }) {
                             Text(
-                                "Remove parent credential",
+                                "移除家长凭据",
                                 color = MaterialTheme.colorScheme.error,
                             )
                         }
@@ -802,7 +802,7 @@ fun SupervisedControlsScreen(
                     },
                 )
                 HorizontalDivider()
-                Text("Automatic relock", style = MaterialTheme.typography.titleSmall)
+                Text("自动重新锁定", style = MaterialTheme.typography.titleSmall)
                 val timeoutOptions = listOf(1, 5, 15, 60)
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                     timeoutOptions.forEachIndexed { index, minutes ->
@@ -830,7 +830,7 @@ fun SupervisedControlsScreen(
     if (showProfilePicker) {
         AlertDialog(
             onDismissRequest = { showProfilePicker = false },
-            title = { Text("Choose agent profile") },
+            title = { Text("选择智能体资料") },
             text = {
                 Column {
                     profiles.forEach { profile ->
@@ -953,7 +953,7 @@ internal fun RemoveParentCredentialDialog(
 ) {
     AlertDialog(
         onDismissRequest = { if (!busy) onDismiss() },
-        title = { Text("Remove parent credential?") },
+        title = { Text("移除家长控制凭据？") },
         text = {
             Text(
                 "This disables Supervised Mode on every connection and removes the app-wide " +
@@ -993,7 +993,7 @@ private fun SupervisedSummaryCard(
             }
         }
         val features = buildList {
-            if (policy.capabilities.attachments) add("Attachments")
+            if (policy.capabilities.attachments) add("附件支持")
             if (policy.capabilities.voice) add("Voice")
             if (policy.capabilities.generatedImages) add("Generated images")
         }
@@ -1145,9 +1145,9 @@ private fun profileLabel(value: String): String = value
     .replaceFirstChar { it.uppercase() }
 
 private fun SupervisedAttachmentCategory.displayLabel(): String = when (this) {
-    SupervisedAttachmentCategory.Images -> "Images"
+    SupervisedAttachmentCategory.Images -> "图片"
     SupervisedAttachmentCategory.Documents -> "Documents"
-    SupervisedAttachmentCategory.Audio -> "Audio"
+    SupervisedAttachmentCategory.Audio -> "语音音频"
     SupervisedAttachmentCategory.Video -> "Video"
 }
 
@@ -1196,7 +1196,7 @@ private fun SupervisedThemeControls(
         restricted = true,
     )
 
-    Text("Theme", style = MaterialTheme.typography.titleSmall)
+    Text("主题", style = MaterialTheme.typography.titleSmall)
     Row(
         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -1217,7 +1217,7 @@ private fun SupervisedThemeControls(
     }
 
     if (selectedTheme.mode == ThemeMode.BOTH) {
-        val modeOptions = listOf("auto" to "System", "light" to "Light", "dark" to "Dark")
+        val modeOptions = listOf("auto" to "System", "light" to "浅色", "dark" to "深色")
         SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
             modeOptions.forEachIndexed { index, option ->
                 SegmentedButton(
@@ -1235,7 +1235,7 @@ private fun SupervisedThemeControls(
         }
     } else {
         Text(
-            if (selectedTheme.mode == ThemeMode.LIGHT_ONLY) "Fixed light theme" else "Fixed dark theme",
+            if (selectedTheme.mode == ThemeMode.LIGHT_ONLY) "固定浅色主题" else "固定深色主题",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -1258,7 +1258,7 @@ private fun SupervisedAgentLookControls(
     }
 
     if (allowProfileIconChanges) {
-        Text("Agent icon", style = MaterialTheme.typography.titleSmall)
+        Text("智能体图标", style = MaterialTheme.typography.titleSmall)
         Text(
             if (localProfileIcon.isNullOrBlank()) {
                 "Using the profile's current icon"
@@ -1270,11 +1270,11 @@ private fun SupervisedAgentLookControls(
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = { iconPicker.launch("image/*") }) {
-                Text("Choose image")
+                Text("选择图片")
             }
             if (!localProfileIcon.isNullOrBlank()) {
                 TextButton(onClick = connectionViewModel::clearProfileIcon) {
-                    Text("Use profile icon")
+                    Text("使用资料图标")
                 }
             }
         }
@@ -1283,7 +1283,7 @@ private fun SupervisedAgentLookControls(
     if (allowProfileIconChanges && allowBackgroundChanges) HorizontalDivider()
 
     if (allowBackgroundChanges) {
-        Text("Chat background", style = MaterialTheme.typography.titleSmall)
+        Text("聊天背景", style = MaterialTheme.typography.titleSmall)
         Text(
             "Choose from backgrounds already installed by the parent.",
             style = MaterialTheme.typography.bodySmall,
@@ -1296,12 +1296,12 @@ private fun SupervisedAgentLookControls(
             FilterChip(
                 selected = !backgroundEnabled,
                 onClick = { connectionViewModel.setBackgroundVisualizationEnabled(false) },
-                label = { Text("Off") },
+                label = { Text("关闭") },
             )
             FilterChip(
                 selected = backgroundEnabled && backgroundAvatar == SphereAvatar.id,
                 onClick = { connectionViewModel.setBackgroundAvatar(SphereAvatar.id) },
-                label = { Text("Sphere") },
+                label = { Text("流光球体") },
             )
             availableBackgrounds.forEach { avatar ->
                 FilterChip(

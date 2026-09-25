@@ -564,28 +564,6 @@ fun SettingsScreen(
             SettingsSectionHeader(stringResource(R.string.settings_hermes))
 
             SettingsCategoryRow(
-                icon = Icons.Filled.Extension,
-                title = stringResource(R.string.plugins_title),
-                subtitle = stringResource(R.string.settings_plugins_desc),
-                onClick = onNavigateToPlugins,
-                isDarkTheme = isDarkTheme,
-            )
-
-            SettingsCategoryRow(
-                icon = Icons.Filled.AccountTree,
-                title = stringResource(R.string.settings_git_workspace),
-                subtitle = stringResource(
-                    if (gitRepoScanningEnabled) {
-                        R.string.settings_git_workspace_desc
-                    } else {
-                        R.string.settings_git_workspace_off_desc
-                    },
-                ),
-                onClick = onNavigateToGitWorkspace,
-                isDarkTheme = isDarkTheme,
-            )
-
-            SettingsCategoryRow(
                 icon = Icons.AutoMirrored.Filled.Chat,
                 title = stringResource(R.string.settings_chat),
                 subtitle = stringResource(R.string.settings_chat_desc),

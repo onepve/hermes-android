@@ -432,7 +432,7 @@
     <string name="cw_dashboard_url_override">Dashboard URL override (optional)</string>
     <string name="cw_api_port">API port</string>
     <string name="cw_dashboard_port">Dashboard port</string>
-    <string name="cw_port_scan_hint">The scan uses these ports. The API server URL above can also use any custom port.</string>
+    <string name="cw_port_scan_hint">Default API port is 8642. Supports any custom or forwarded port.</string>
     <string name="cw_update_existing_title">Update existing connection?</string>
     <string name="cw_update_existing_body">You already have a connection to this server:</string>
     <string name="cw_update_existing_hint">Update this connection instead of creating another card. Only one connection per server is kept.</string>
