@@ -7557,7 +7557,7 @@ class ChatViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val lastMsg = handler.messages.value.lastOrNull()
-                val needsSync = _isStreaming.value || _recoveringAnswer.value || (lastMsg?.role == "user")
+                val needsSync = handler.isStreaming.value || _recoveringAnswer.value || (lastMsg?.role == MessageRole.USER)
                 if (needsSync || streamRecovery?.isActive == true) {
                     val messages = loadSessionHistory(sessionId)
                     if (messages.isNotEmpty() && handler.currentSessionId.value == sessionId) {
@@ -7565,7 +7565,6 @@ class ChatViewModel : ViewModel() {
                         val lastAssistant = messages.lastOrNull { it.role == "assistant" && !it.contentText.isNullOrBlank() }
                         if (lastAssistant != null) {
                             _recoveringAnswer.value = false
-                            _isStreaming.value = false
                             clearTurnCheckpoint()
                         }
                     }
