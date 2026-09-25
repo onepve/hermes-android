@@ -473,7 +473,7 @@ private fun StoreCockpit(
                 value = "",
                 onValueChange = {},
                 placeholder = "Message…",
-                trailing = ChatInputTrailing.VOICE,
+                trailing = ChatInputTrailing.NONE,
                 onSend = {}, onVoice = {}, onStop = {},
                 onAttachPhotos = {}, onAttachFiles = {}, onAttachCamera = {}, onPasteImage = {}, onLongPressAttach = {},
                 charLimit = 4000,

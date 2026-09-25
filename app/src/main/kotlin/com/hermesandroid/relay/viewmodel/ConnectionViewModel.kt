@@ -2107,9 +2107,9 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
     // Theme preference — light/dark/auto mode axis.
     val theme: StateFlow<String> = application.relayDataStore.data
         .map { preferences ->
-            preferences[AppearancePreferences.themeKey] ?: "auto"
+            preferences[AppearancePreferences.themeKey] ?: "light"
         }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, "auto")
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "light")
 
     // Selected app theme id (palette identity). Defaults to the Hermes Relay
     // brand. Resolved against AppThemes.byId at the Compose theme root.
@@ -8498,7 +8498,7 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch {
             getApplication<Application>().relayDataStore.edit { preferences ->
                 preferences[AppearancePreferences.appThemeKey] = AppThemes.DEFAULT_ID
-                preferences[AppearancePreferences.themeKey] = "auto"
+                preferences[AppearancePreferences.themeKey] = "light"
                 preferences.remove(AppearancePreferences.accentKey)
                 preferences[AppearancePreferences.shapeKey] = AppearanceShape.DEFAULT.id
             }

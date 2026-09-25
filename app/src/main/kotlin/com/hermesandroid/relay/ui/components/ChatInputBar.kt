@@ -89,13 +89,21 @@ import kotlinx.coroutines.delay
  *
  * ```
  * !isStreaming && hasContent      -> SEND    // Send arrow, primary (Relay)
- * !isStreaming                    -> VOICE   // GraphicEq, primary
+ * !isStreaming                    -> NONE    // Clean slot, no voice button
  * isStreaming && !hasContent      -> STOP    // Stop in a Danger-outlined circle
  * canCorrect (gateway transport)  -> STEER   // Send glyph, tertiary (Cyan)
  * else                            -> QUEUE   // Send glyph + clock badge, tertiary
  * ```
  */
-enum class ChatInputTrailing { SEND, VOICE, STOP, STEER, QUEUE }
+enum class ChatInputTrailing {
+    SEND,
+    STOP,
+    STEER,
+    QUEUE,
+    NONE,
+    @Deprecated("Voice stripped in pure AI mode")
+    VOICE,
+}
 
 internal const val CHAT_INPUT_FIELD_TEST_TAG = "chat-input-field"
 
@@ -216,25 +224,8 @@ fun ChatInputBar(
         if (caption != null) lastCaption = caption
     }
 
-    // One-shot voice hint. Consumed-flag locally so flipping the DataStore
-    // flag (via onVoiceHintShown) can't restart-cancel the visible window;
-    // the hide timer is keyed on visibility alone so trailing-state morphs
-    // mid-delay don't strand the pill.
-    var hintVisible by remember { mutableStateOf(false) }
-    var hintConsumed by remember { mutableStateOf(false) }
-    LaunchedEffect(showVoiceHint, trailing) {
-        if (showVoiceHint && !hintConsumed && trailing == ChatInputTrailing.VOICE) {
-            hintConsumed = true
-            hintVisible = true
-            onVoiceHintShown()
-        }
-    }
-    LaunchedEffect(hintVisible) {
-        if (hintVisible) {
-            delay(3_000)
-            hintVisible = false
-        }
-    }
+    // Voice hint pill disabled in pure AI mode
+    val hintVisible = false
 
     Column(modifier = modifier.fillMaxWidth()) {
         // Correction and queueing are materially different actions. Keep the
@@ -568,31 +559,9 @@ fun ChatInputBar(
                                     )
                                 }
 
+                                ChatInputTrailing.NONE,
                                 ChatInputTrailing.VOICE -> {
-                                    if (!suppressVoiceTrailing) {
-                                        Box {
-                                            IconButton(onClick = onVoice) {
-                                                Icon(
-                                                    imageVector = Icons.Filled.GraphicEq,
-                                                    contentDescription = if (voiceReady) stringResource(R.string.chat_input_start_voice)
-                                                        else stringResource(R.string.chat_input_voice_setup_needed),
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                )
-                                            }
-                                            // "Needs setup" badge — full-alpha button + Amber
-                                            // dot instead of a half-dimmed broken-looking mic.
-                                            if (!voiceReady) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .align(Alignment.TopEnd)
-                                                        .padding(top = 8.dp, end = 8.dp)
-                                                        .size(6.dp)
-                                                        .clip(CircleShape)
-                                                        .background(RelayRefresh.Amber),
-                                                )
-                                            }
-                                        }
-                                    }
+                                    // Idle state: keep trailing slot clean without voice buttons
                                 }
 
                                 ChatInputTrailing.STOP -> {

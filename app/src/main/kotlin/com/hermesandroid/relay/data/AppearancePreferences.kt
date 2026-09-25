@@ -13,7 +13,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
 internal data class PersistedAppearance(
-    val themePreference: String = "auto",
+    val themePreference: String = "light",
     val appThemeId: String = AppThemes.DEFAULT_ID,
     val accentHex: String? = null,
     val shapeId: String = AppearanceShape.DEFAULT.id,
@@ -43,7 +43,7 @@ internal object AppearancePreferences {
             PersistedAppearance(
                 themePreference = preferences[themeKey]
                     ?.takeIf { it == "auto" || it == "light" || it == "dark" }
-                    ?: "auto",
+                    ?: "light",
                 appThemeId = customTheme?.appThemeId ?: AppThemes.byId(requestedThemeId).id,
                 accentHex = normalizeAccentHex(preferences[accentKey]),
                 shapeId = AppearanceShape.fromId(preferences[shapeKey]).id,

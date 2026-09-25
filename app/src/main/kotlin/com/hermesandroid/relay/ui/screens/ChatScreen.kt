@@ -4250,7 +4250,7 @@ fun ChatScreen(
                 effectiveBusyAction == BusyMessageAction.CorrectNow
             val trailing = when {
                 !isStreaming && hasContent -> ChatInputTrailing.SEND
-                !isStreaming -> ChatInputTrailing.VOICE
+                !isStreaming -> ChatInputTrailing.NONE
                 isStreaming && !hasContent -> ChatInputTrailing.STOP
                 correctCurrentMessage -> ChatInputTrailing.STEER
                 else -> ChatInputTrailing.QUEUE
@@ -4558,28 +4558,7 @@ fun ChatScreen(
                         finishSuccessfulSend()
                     }
                 },
-                onVoice = {
-                    dispatchChatVoiceAction(
-                        isDemoMode = isDemoMode,
-                        voiceReady = voiceReady,
-                        onDemoNotice = {
-                            UiMessageBus.warning("Voice is unavailable in the offline demo — connect to Hermes to use it")
-                        },
-                        onStartVoice = requestVoiceMode,
-                        onSetupNotice = {
-                            UiMessageBus.warning(when (standardVoiceAvailability) {
-                                    com.hermesandroid.relay.viewmodel.StandardVoiceAvailability.SignInRequired ->
-                                        standardVoiceSignInRouteHint?.let { route ->
-                                            "Voice needs a one-time sign-in on the $route route — open Manage"
-                                        } ?: "Voice needs dashboard sign-in — open Manage to sign in"
-                                    com.hermesandroid.relay.viewmodel.StandardVoiceAvailability.Unsupported ->
-                                        "This Hermes build has no voice routes — update hermes-agent or pair Relay"
-                                    else ->
-                                        context.getString(R.string.chat_voice_needs_route)
-                                })
-                        },
-                    )
-                },
+                onVoice = {},
                 onStop = {
                     if (supervised && !supervisedPolicy.capabilities.cancelResponse) {
                         return@ChatInputBar
@@ -4713,31 +4692,9 @@ fun ChatScreen(
                 },
                 effortControl = effortControl,
                 onEffortPickerClick = { showEffortSheet = true },
-                topContent = {
-                    ConversationVoiceDock(
-                        uiState = voiceUiState,
-                        engineMode = voiceStats.voiceEngineMode,
-                        provider = activeVoiceProvider,
-                        model = activeVoiceModel,
-                        voice = activeVoiceName,
-                        profileName = AgentDisplay.profileDisplayName(effectiveProfile),
-                        outputEnabled = activeVoiceEnabled,
-                        onMicTap = { voiceViewModel.startListening() },
-                        onMicRelease = { voiceViewModel.stopListening() },
-                        onInterrupt = { voiceViewModel.interruptSpeaking() },
-                        onPauseAutoMode = { voiceViewModel.pauseContinuousMode() },
-                        onModeChange = { voiceViewModel.setInteractionMode(it) },
-                        onFocusRequest = {
-                            setVoicePresentationMode(VoicePresentationMode.Focus)
-                        },
-                        onOverlayRequest = showVoiceSystemOverlay,
-                        systemOverlayAvailable = voiceSystemOverlayAvailable,
-                        onOpenSettings = onNavigateToVoiceSettings,
-                        onExit = { voiceViewModel.exitVoiceMode() },
-                    )
-                },
-                topContentVisible = conversationVoiceDockVisible,
-                suppressVoiceTrailing = conversationVoiceDockVisible,
+                topContent = null,
+                topContentVisible = false,
+                suppressVoiceTrailing = false,
                 // Measure the visible composer Surface as a Desktop-style
                 // ledge. Registering the outer input column includes its 6dp
                 // visual margin and makes a correctly grounded pet look raised.
@@ -4874,77 +4831,7 @@ fun ChatScreen(
             }
         }
 
-        // Voice mode overlay — covers the whole Box when voiceUiState.voiceMode
-        AnimatedVisibility(
-            visible = voiceUiState.voiceMode,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            VoiceModeOverlay(
-                uiState = voiceUiState,
-                onMicTap = { voiceViewModel.startListening() },
-                onMicRelease = { voiceViewModel.stopListening() },
-                onInterrupt = { voiceViewModel.interruptSpeaking() },
-                onPauseAutoMode = { voiceViewModel.pauseContinuousMode() },
-                onDismiss = { voiceViewModel.exitVoiceMode() },
-                onModeChange = { voiceViewModel.setInteractionMode(it) },
-                onClearError = { voiceViewModel.clearError() },
-                onBackgroundRunCancel = { voiceViewModel.cancelBackgroundRun() },
-                onBackgroundRunTap = { voiceViewModel.respeakBackgroundResult() },
-                // Agent B's overlay collects this flow and renders classified
-                // voice errors (mic capture, STT/TTS failures, relay drops).
-                errorEvents = voiceViewModel.errorEvents,
-                // Voice-first transcript: pass the last N chat messages so
-                // voice mode can show a compact rolling history including
-                // local-only voice-intent traces (agentName="Voice action").
-                // Bounded to 12 to keep voice mode focused while still
-                // preserving enough recent tool/context rows for voice turns.
-                transcriptMessages = messages.takeLast(12),
-                showThinking = showThinking,
-                voiceEngineMode = voiceStats.voiceEngineMode,
-                voiceOutputProvider = activeVoiceProvider,
-                voiceOutputModel = activeVoiceModel,
-                voiceOutputVoice = activeVoiceName,
-                voiceProfileName = AgentDisplay.profileDisplayName(effectiveProfile),
-                voiceOutputEnabled = activeVoiceEnabled,
-                voiceOutputFallbackEnabled = voiceOutputConfig?.fallback_enabled,
-                presentationMode = effectiveVoicePresentationMode,
-                onPresentationModeChange = setVoicePresentationMode,
-                onOverlayRequest = showVoiceSystemOverlay,
-                systemOverlayAvailable = voiceSystemOverlayAvailable,
-                // Gear button in the overlay's expanded controls. The overlay
-                // exits voice mode before invoking this, so navigation lands
-                // on Voice Settings with no overlay left on top.
-                onOpenSettings = onNavigateToVoiceSettings,
-                // === v0.4.1 JIT permission-denied chip ===
-                // Tap deep-links to Settings → Apps → Hermes-Relay →
-                // Permissions for the running package. Use BuildConfig
-                // .APPLICATION_ID rather than a hard-coded string so both
-                // the googlePlay and sideload flavors land on their own
-                // package's permission page.
-                onPermissionDeniedChipTap = { _ ->
-                    runCatching {
-                        val intent = android.content.Intent(
-                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            android.net.Uri.parse(
-                                "package:${com.hermesandroid.relay.BuildConfig.APPLICATION_ID}"
-                            ),
-                        ).apply {
-                            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        context.startActivity(intent)
-                    }
-                    voiceViewModel.clearPermissionDeniedCallout()
-                },
-                onHermesConfirmationAnswer = { answer ->
-                    voiceViewModel.answerHermesConfirmation(answer)
-                },
-                onCardAction = handleCardAction,
-                onCardInput = handleCardInput,
-                // === END v0.4.1 ===
-            )
-        }
+        // Voice mode overlay disabled in pure AI mode
         } // end Box
     }
 

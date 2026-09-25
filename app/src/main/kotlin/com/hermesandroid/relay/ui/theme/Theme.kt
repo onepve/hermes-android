@@ -35,7 +35,7 @@ import com.hermesandroid.relay.data.PersistedAppearance
 @Composable
 fun HermesRelayTheme(
     appThemeId: String = AppThemes.DEFAULT_ID,
-    themePreference: String = "auto",
+    themePreference: String = "light",
     fontScale: Float = 1.0f,
     appFontId: String = AppFont.DEFAULT.id,
     accentHex: String? = null,

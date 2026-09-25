@@ -486,10 +486,20 @@ data class AppTheme(
 
 /** Registry of built-in app themes, in picker order. */
 object AppThemes {
-    const val DEFAULT_ID = "hermes-relay"
+    const val DEFAULT_ID = "nous-blue"
+
+    val NousBlue = AppTheme(
+        id = DEFAULT_ID,
+        label = "Nous Blue",
+        description = "Light mode — vivid Nous-blue accents on a cream canvas",
+        mode = ThemeMode.LIGHT_ONLY,
+        darkPalette = BrandPalettes.NousBlue,
+        lightPalette = BrandPalettes.NousBlue,
+        swatch = listOf(Color(0xFFE8F2FD), Color(0xFF0053FD), Color(0xFF0A1F3C)),
+    )
 
     val HermesRelay = AppTheme(
-        id = DEFAULT_ID,
+        id = "hermes-relay",
         label = "Hermes Relay",
         description = "The signature electric-blue brand — follows light/dark",
         mode = ThemeMode.BOTH,
@@ -506,16 +516,6 @@ object AppThemes {
         darkPalette = BrandPalettes.HermesTeal,
         lightPalette = BrandPalettes.HermesTeal,
         swatch = listOf(Color(0xFF04201F), Color(0xFF0FA295), Color(0xFFFFE6CB)),
-    )
-
-    val NousBlue = AppTheme(
-        id = "nous-blue",
-        label = "Nous Blue",
-        description = "Light mode — vivid Nous-blue accents on a cream canvas",
-        mode = ThemeMode.LIGHT_ONLY,
-        darkPalette = BrandPalettes.NousBlue,
-        lightPalette = BrandPalettes.NousBlue,
-        swatch = listOf(Color(0xFFE8F2FD), Color(0xFF0053FD), Color(0xFF0A1F3C)),
     )
 
     val Midnight = AppTheme(
@@ -570,9 +570,9 @@ object AppThemes {
 
     /** All themes in picker order: brand first, then the Nous baselines. */
     val ALL: List<AppTheme> = listOf(
+        NousBlue,
         HermesRelay,
         HermesTeal,
-        NousBlue,
         Midnight,
         Ember,
         Mono,
@@ -582,5 +582,5 @@ object AppThemes {
 
     private val byId = ALL.associateBy { it.id }
 
-    fun byId(id: String?): AppTheme = byId[id] ?: HermesRelay
+    fun byId(id: String?): AppTheme = byId[id] ?: NousBlue
 }

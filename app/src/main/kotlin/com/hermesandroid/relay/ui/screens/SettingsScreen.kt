@@ -580,14 +580,6 @@ fun SettingsScreen(
                 isDarkTheme = isDarkTheme,
             )
 
-            SettingsCategoryRow(
-                icon = Icons.Filled.GraphicEq,
-                title = stringResource(R.string.settings_voice_mode),
-                subtitle = stringResource(R.string.settings_voice_mode_desc),
-                onClick = onNavigateToVoiceSettings,
-                isDarkTheme = isDarkTheme,
-            )
-
             SettingsSectionHeader("App")
 
             SettingsCategoryRow(
