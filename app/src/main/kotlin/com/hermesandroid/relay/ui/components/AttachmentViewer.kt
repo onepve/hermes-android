@@ -489,7 +489,7 @@ internal fun AttachmentGalleryViewer(
                     try {
                         val bytes = attachmentBytes(context, target)
                         if (bytes == null) {
-                            UiMessageBus.error("Couldn't read this image")
+                            UiMessageBus.error("无法读取此图片")
                             return@launch
                         }
                         action(target, bytes)
@@ -524,7 +524,7 @@ internal fun AttachmentGalleryViewer(
                         target.contentType,
                     )) {
                         is MediaSaver.SaveResult.Saved ->
-                            UiMessageBus.success("Saved to ${result.location}")
+                            UiMessageBus.success("已保存至 ${result.location}")
                         MediaSaver.SaveResult.UseShareInstead -> {
                             val uri = MediaSaver.stageForShare(
                                 context,
@@ -535,7 +535,7 @@ internal fun AttachmentGalleryViewer(
                             MediaSaver.share(context, uri, target.contentType)
                         }
                         is MediaSaver.SaveResult.Failed ->
-                            UiMessageBus.error("Save failed: ${result.message}")
+                            UiMessageBus.error("保存失败：${result.message}")
                     }
                 }
             }
@@ -547,7 +547,7 @@ internal fun AttachmentGalleryViewer(
                     runCatching {
                         MediaSaver.open(context, Uri.parse(cached), target.contentType)
                     }.onFailure {
-                        UiMessageBus.error("Couldn't open this image")
+                        UiMessageBus.error("无法打开此图片")
                     }
                 } else {
                     runWithBytes { item, bytes ->

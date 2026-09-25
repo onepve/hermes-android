@@ -560,21 +560,27 @@ internal fun resolveGatewayCardPresentation(
                 connection.routeCandidates.firstOrNull { it.role.equals(preferred, ignoreCase = true) }
             }
         ?: connection.routeCandidates.minByOrNull { it.priority }
+    val selectedDirectApiUrl = selectedRoute?.api?.url
+        ?: connection.apiServerUrl.trim().trimEnd('/').takeIf { it.isNotBlank() }
     val selectedGatewayUrl = selectedRoute?.gatewayRouteUrl()
     val effectiveGatewayUrl = effectiveDashboardUrl.trim().trimEnd('/').takeIf { it.isNotBlank() }
+    val isDirectApiOnly = (selectedGatewayUrl == null && effectiveGatewayUrl == null) && selectedDirectApiUrl != null
     val routeUrl = if (active) {
-        effectiveGatewayUrl ?: selectedGatewayUrl
+        effectiveGatewayUrl ?: selectedGatewayUrl ?: selectedDirectApiUrl
     } else {
-        selectedGatewayUrl ?: effectiveGatewayUrl
+        selectedGatewayUrl ?: effectiveGatewayUrl ?: selectedDirectApiUrl
     }
     val matchingSelectedRoute = selectedRoute?.takeIf {
-        selectedGatewayUrl != null && routeUrl != null && sameGatewayRouteBase(selectedGatewayUrl, routeUrl)
+        (selectedGatewayUrl != null && routeUrl != null && sameGatewayRouteBase(selectedGatewayUrl, routeUrl)) ||
+        (isDirectApiOnly && selectedDirectApiUrl != null && routeUrl != null && sameGatewayRouteBase(selectedDirectApiUrl, routeUrl))
     }
     val routeRole = matchingSelectedRoute?.role
         ?: routeUrl?.let { Connection.inferRouteRole(it) }
 
     val status = if (routeUrl == null) {
         GatewayCardStatus.NoRoute
+    } else if (isDirectApiOnly) {
+        if (active) GatewayCardStatus.Online else GatewayCardStatus.LastCheckSucceeded
     } else if (active && gatewayAvailability != null) {
         when (gatewayAvailability) {
             GatewayAvailability.Ready -> GatewayCardStatus.Online
@@ -596,8 +602,8 @@ internal fun resolveGatewayCardPresentation(
 
     return GatewayCardPresentation(
         status = status,
-        routeName = routeRole?.let { gatewayRegistryRouteLabel(it, matchingSelectedRoute?.displayName) },
-        transport = routeUrl?.let(::gatewayRegistryTransportLabel),
+        routeName = routeRole?.let { gatewayRegistryRouteLabel(it, matchingSelectedRoute?.displayName) } ?: "Direct API",
+        transport = if (isDirectApiOnly) "Direct API" else routeUrl?.let(::gatewayRegistryTransportLabel),
     )
 }
 

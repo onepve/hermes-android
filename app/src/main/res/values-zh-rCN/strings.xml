@@ -84,7 +84,7 @@
     <string name="chat_input_camera">相机</string>
     <string name="chat_input_paste_image">粘贴图片</string>
     <string name="chat_input_send_message">发送消息</string>
-    <string name="chat_input_start_voice">开始语音对话</string>
+    <string name="chat_input_start_voice">语音输入</string>
     <string name="chat_input_voice_setup_needed">语音对话——需要先设置</string>
     <string name="chat_input_stop_streaming">停止流式响应</string>
     <string name="chat_input_steer_response">修正回复</string>

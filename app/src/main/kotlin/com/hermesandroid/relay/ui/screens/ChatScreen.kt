@@ -164,7 +164,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
 import android.content.ClipData
+import android.app.Activity
 import android.content.Intent
+import android.speech.RecognizerIntent
 import android.net.Uri
 import android.provider.Settings
 import com.hermesandroid.relay.ui.UiMessageBus
@@ -784,10 +786,10 @@ fun ChatScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Supervised chat unavailable") },
+                    title = { Text("受监督聊天不可用") },
                     actions = {
                         IconButton(onClick = onNavigateToSettings) {
-                            Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                            Icon(Icons.Filled.Settings, contentDescription = "设置")
                         }
                     },
                 )
@@ -798,7 +800,7 @@ fun ChatScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    "The supervised profile is unavailable. Parent access is required to update this connection.",
+                    "受监督资料不可用。更新此连接需要家长权限。",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -847,6 +849,57 @@ fun ChatScreen(
     // request; on grant, latch the pending-enter and fire enterVoiceMode() in
     // the callback. Denial shows an inline banner above the input.
     val context = LocalContext.current
+    val speechInputLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val spokenText = result.data
+                ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                ?.firstOrNull()
+                ?.trim()
+            if (!spokenText.isNullOrBlank()) {
+                val current = chatViewModel.inputText
+                val combined = if (current.isBlank()) spokenText else "$current $spokenText"
+                chatViewModel.setInputText(combined)
+            }
+        }
+    }
+
+    val recordAudioPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
+                putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，识别为中文后填入…")
+            }
+            try {
+                speechInputLauncher.launch(intent)
+            } catch (_: Exception) {
+                UiMessageBus.warning("未检测到系统语音识别服务")
+            }
+        } else {
+            UiMessageBus.warning("需要麦克风权限以使用语音输入")
+        }
+    }
+
+    val handleVoiceInput: () -> Unit = {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
+                putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，识别为中文后填入…")
+            }
+            try {
+                speechInputLauncher.launch(intent)
+            } catch (_: Exception) {
+                UiMessageBus.warning("未检测到系统语音识别服务")
+            }
+        } else {
+            recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val voiceOverlayHost = remember { VoiceOverlayHost.install(context) }
     val assistantSessionActive by AssistantAppSessionState.active.collectAsState()
@@ -2758,7 +2811,7 @@ fun ChatScreen(
                         }
                     } else if (supervisedPolicy.capabilities.newChat) {
                         IconButton(onClick = { chatViewModel.createNewChat() }) {
-                            Icon(Icons.Filled.Edit, contentDescription = "New chat")
+                            Icon(Icons.Filled.Edit, contentDescription = "新建聊天")
                         }
                     }
                 },
@@ -3998,10 +4051,10 @@ fun ChatScreen(
                                 .size(48.dp)
                                 .semantics {
                                     contentDescription = if (unreadMessageCount > 0) {
-                                        "Scroll to bottom, $unreadMessageCount unread " +
+                                        "滚动到底部，有 $unreadMessageCount 条未读消息 " +
                                             if (unreadMessageCount == 1) "message" else "messages"
                                     } else {
-                                        "Scroll to bottom"
+                                        "滚动到底部"
                                     }
                                 },
                             onClick = {
@@ -4250,7 +4303,7 @@ fun ChatScreen(
                 effectiveBusyAction == BusyMessageAction.CorrectNow
             val trailing = when {
                 !isStreaming && hasContent -> ChatInputTrailing.SEND
-                !isStreaming -> ChatInputTrailing.NONE
+                !isStreaming -> ChatInputTrailing.VOICE
                 isStreaming && !hasContent -> ChatInputTrailing.STOP
                 correctCurrentMessage -> ChatInputTrailing.STEER
                 else -> ChatInputTrailing.QUEUE
@@ -4360,7 +4413,7 @@ fun ChatScreen(
                                     ChatInputPickerOption(
                                         label = AgentDisplay.displayModelName(model.id) ?: model.id,
                                         value = model.id,
-                                        group = "Routes",
+                                        group = "路由",
                                         secondary = model.routeDetail,
                                         selected = sessionModelState.pickerModel == model.id,
                                     ),
@@ -4495,7 +4548,7 @@ fun ChatScreen(
                             }
                             scope.launch {
                                 clipboard.setClipEntry(
-                                    ClipEntry(ClipData.newPlainText("Hermes response failure", details)),
+                                    ClipEntry(ClipData.newPlainText("Hermes 响应失败", details)),
                                 )
                                 snackbarHostState.showSnackbar(
                                     message = context.getString(R.string.chat_copied_to_clipboard),
@@ -4558,7 +4611,7 @@ fun ChatScreen(
                         finishSuccessfulSend()
                     }
                 },
-                onVoice = {},
+                onVoice = handleVoiceInput,
                 onStop = {
                     if (supervised && !supervisedPolicy.capabilities.cancelResponse) {
                         return@ChatInputBar

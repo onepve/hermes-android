@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.PhotoCamera
@@ -559,9 +560,21 @@ fun ChatInputBar(
                                     )
                                 }
 
-                                ChatInputTrailing.NONE,
-                                ChatInputTrailing.VOICE -> {
+                                ChatInputTrailing.NONE -> {
                                     // Idle state: keep trailing slot clean without voice buttons
+                                }
+
+                                ChatInputTrailing.VOICE -> {
+                                    IconButton(
+                                        onClick = onVoice,
+                                        modifier = Modifier.size(40.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Mic,
+                                            contentDescription = stringResource(R.string.chat_input_start_voice),
+                                            tint = MaterialTheme.colorScheme.primary,
+                                        )
+                                    }
                                 }
 
                                 ChatInputTrailing.STOP -> {

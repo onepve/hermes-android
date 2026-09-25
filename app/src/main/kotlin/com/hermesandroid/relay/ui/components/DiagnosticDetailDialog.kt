@@ -200,7 +200,7 @@ fun DiagnosticDetailDialog(entry: DiagnosticLogEntry, onDismiss: () -> Unit) {
                                 )
                                 if (!shared) {
                                     IssueReport.copyToClipboard(context, plainText)
-                                    UiMessageBus.warning("Copied — no app found to share to")
+                                    UiMessageBus.warning("已复制 — 未找到可分享的应用")
                                 }
                             },
                         ) { Text(stringResource(R.string.common_export)) }
@@ -225,8 +225,8 @@ fun DiagnosticDetailDialog(entry: DiagnosticLogEntry, onDismiss: () -> Unit) {
                                         labels = DiagnosticIssuePrefill.issueLabels(entry),
                                     ),
                                 )
-                                if (opened) UiMessageBus.success("Full diagnostic copied — paste it into the issue if truncated")
-                                else UiMessageBus.warning("Copied — no browser found to open GitHub")
+                                if (opened) UiMessageBus.success("完整诊断信息已复制")
+                                else UiMessageBus.warning("已复制 — 未找到可用浏览器")
                             },
                         ) { Text(stringResource(R.string.common_report)) }
                     }

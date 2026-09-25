@@ -5,34 +5,34 @@
     <string name="clarify_batch_expired">This request has ended</string>
     <string name="clarify_batch_sending">Sending answer…</string>
     <string name="clarify_batch_answered">Answered questions (%1$d)</string>
-    <string name="chat_debug_title" translatable="false">Session diagnostics</string>
-    <string name="chat_debug_open" translatable="false">Open session diagnostics</string>
-    <string name="chat_debug_close" translatable="false">Close session diagnostics</string>
-    <string name="chat_debug_preparing" translatable="false">Preparing session…</string>
-    <string name="chat_debug_sign_in" translatable="false">Dashboard sign-in</string>
-    <string name="chat_debug_sign_in_needed" translatable="false">Sign in to continue this conversation.</string>
-    <string name="chat_debug_authenticated" translatable="false">Authenticated for this connection.</string>
-    <string name="chat_debug_auth_unknown" translatable="false">Sign-in has not been confirmed.</string>
-    <string name="chat_debug_gateway" translatable="false">Live connection</string>
-    <string name="chat_debug_socket_ready" translatable="false">Gateway is ready to receive requests.</string>
-    <string name="chat_debug_ticket" translatable="false">Requesting a secure connection ticket…</string>
-    <string name="chat_debug_socket_connecting" translatable="false">Opening the Gateway connection…</string>
-    <string name="chat_debug_socket_waiting" translatable="false">Waiting for the Gateway to become ready…</string>
-    <string name="chat_debug_socket_idle" translatable="false">No live Gateway connection.</string>
-    <string name="chat_debug_session" translatable="false">Conversation session</string>
-    <string name="chat_debug_preparing_detail" translatable="false">Hermes is initializing this session. The message has not been sent yet.</string>
-    <string name="chat_debug_history_loading" translatable="false">Loading saved messages…</string>
-    <string name="chat_debug_history_failed" translatable="false">Saved conversations could not be refreshed.</string>
-    <string name="chat_debug_session_selected" translatable="false">Session selected.</string>
-    <string name="chat_debug_session_new" translatable="false">A session will be created when you send.</string>
-    <string name="chat_debug_response" translatable="false">Agent response</string>
-    <string name="chat_debug_response_failed" translatable="false">The request failed. Details are below.</string>
-    <string name="chat_debug_response_waiting" translatable="false">Waiting for session initialization.</string>
-    <string name="chat_debug_response_active" translatable="false">Waiting for the current reply to finish.</string>
-    <string name="chat_debug_response_idle" translatable="false">No reply is currently in progress.</string>
-    <string name="chat_debug_init_recovery" translatable="false">Hermes could not initialize the agent. Check the server runtime and logs before retrying; signing in again may not resolve this.</string>
-    <string name="chat_debug_session_id" translatable="false">Session · %1$s</string>
-    <string name="chat_debug_connections" translatable="false">Connection settings</string>
+    <string name="chat_debug_title" translatable="false">会话诊断</string>
+    <string name="chat_debug_open" translatable="false">打开会话诊断</string>
+    <string name="chat_debug_close" translatable="false">关闭会话诊断</string>
+    <string name="chat_debug_preparing" translatable="false">正在准备会话…</string>
+    <string name="chat_debug_sign_in" translatable="false">控制台登录</string>
+    <string name="chat_debug_sign_in_needed" translatable="false">登录以继续此对话。</string>
+    <string name="chat_debug_authenticated" translatable="false">当前连接已成功鉴权。</string>
+    <string name="chat_debug_auth_unknown" translatable="false">登录凭据尚未确认。</string>
+    <string name="chat_debug_gateway" translatable="false">实时连接</string>
+    <string name="chat_debug_socket_ready" translatable="false">网关已就绪，可接收请求。</string>
+    <string name="chat_debug_ticket" translatable="false">正在请求安全连接票据…</string>
+    <string name="chat_debug_socket_connecting" translatable="false">正在打开网关连接…</string>
+    <string name="chat_debug_socket_waiting" translatable="false">正在等待网关就绪…</string>
+    <string name="chat_debug_socket_idle" translatable="false">暂无活跃的网关连接。</string>
+    <string name="chat_debug_session" translatable="false">对话会话</string>
+    <string name="chat_debug_preparing_detail" translatable="false">Hermes 正在初始化此会话，消息尚未发出。</string>
+    <string name="chat_debug_history_loading" translatable="false">正在加载历史消息…</string>
+    <string name="chat_debug_history_failed" translatable="false">无法刷新已保存的历史会话。</string>
+    <string name="chat_debug_session_selected" translatable="false">已选择会话。</string>
+    <string name="chat_debug_session_new" translatable="false">发送消息时将自动创建新会话。</string>
+    <string name="chat_debug_response" translatable="false">智能体回复</string>
+    <string name="chat_debug_response_failed" translatable="false">请求失败，详细信息见下方。</string>
+    <string name="chat_debug_response_waiting" translatable="false">正在等待会话初始化。</string>
+    <string name="chat_debug_response_active" translatable="false">正在等待当前回复完成。</string>
+    <string name="chat_debug_response_idle" translatable="false">当前无进行中的回复。</string>
+    <string name="chat_debug_init_recovery" translatable="false">Hermes 无法初始化智能体。重试前请检查服务端运行状态及日志；重新登录可能无法解决此问题。</string>
+    <string name="chat_debug_session_id" translatable="false">会话 · %1$s</string>
+    <string name="chat_debug_connections" translatable="false">连接设置</string>
     <string name="app_name">Hermes</string>
     <string name="app_title">Hermes</string>
     <string name="agent_interface">agent interface</string>
@@ -3943,12 +3943,12 @@
     <string name="tool_output_risk_a11y">, %1$s output risk</string>
     <string name="tool_output_risk_findings">Output risk findings</string>
     <string name="tool_output_risk_redacted">Sensitive spans were redacted upstream.</string>
-    <string name="diag_gateway_heartbeat" translatable="false">Gateway loop: %1$s%2$s</string>
-    <string name="diag_toolsets_inventory" translatable="false">API toolsets: %1$d of %2$d enabled · Relay tools visible: %3$s</string>
-    <string name="diag_yes" translatable="false">yes</string>
-    <string name="diag_no" translatable="false">no</string>
-    <string name="dashboard_nous_terminal_warning" translatable="false">The Nous provider login needs attention on the Hermes host. This is separate from Manage sign-in; chat can continue through another configured provider.</string>
-    <string name="dashboard_gateway_topology" translatable="false">Gateway: %1$s · Profiles: %2$s · Ports: %3$s</string>
+    <string name="diag_gateway_heartbeat" translatable="false">网关轮询：%1$s%2$s</string>
+    <string name="diag_toolsets_inventory" translatable="false">API 工具集：已启用 %1$d / %2$d · 可见 Relay 工具：%3$s</string>
+    <string name="diag_yes" translatable="false">是</string>
+    <string name="diag_no" translatable="false">否</string>
+    <string name="dashboard_nous_terminal_warning" translatable="false">Nous 服务商登录在 Hermes 宿主机上需要关注。这与管理登录无关；聊天可通过其他已配置的服务商继续进行。</string>
+    <string name="dashboard_gateway_topology" translatable="false">网关：%1$s · 资料：%2$s · 端口：%3$s</string>
     <string name="onboarding_talk_to_agent">Talk to Your Agent</string>
     <string name="onboarding_stream_desc">Stream conversations with any Hermes profile. Ask questions, run tasks, and collaborate in real time</string>
     <string name="onboarding_lets_connect">Let\'s Connect</string>
@@ -4645,20 +4645,20 @@
     <string name="tool_progress_status_dispatched">Dispatched</string>
     <string name="chat_activity_history_notice">Recorded activity. Progress updates are not retained; available child history can be opened read-only.</string>
     <string name="chat_activity_output_unavailable">Output is no longer available. This entry preserves the recorded process status.</string>
-    <string name="dev_message_previews" translatable="false">Message previews</string>
-    <string name="dev_message_previews_desc" translatable="false">Local-only samples using the app’s real message surfaces. No requests are sent. Samples clear when you leave this screen.</string>
-    <string name="dev_message_info" translatable="false">Info preview</string>
-    <string name="dev_message_success" translatable="false">Success preview</string>
-    <string name="dev_message_progress" translatable="false">Progress preview</string>
-    <string name="dev_message_warning" translatable="false">Warning preview</string>
-    <string name="dev_message_error" translatable="false">Error preview</string>
-    <string name="dev_message_preview_sample" translatable="false">Show a themed sample. Progress stays until replaced or cleared.</string>
-    <string name="dev_message_action" translatable="false">Actionable error preview</string>
-    <string name="dev_message_action_body" translatable="false">This is a simulated error with a longer explanation. Expand or scroll to check readability. Retry only confirms the preview action; it does not contact a server.</string>
-    <string name="dev_message_retry" translatable="false">Retry</string>
-    <string name="dev_message_retry_result" translatable="false">Preview retry selected — no request sent.</string>
-    <string name="dev_message_clear" translatable="false">Clear previews</string>
-    <string name="dev_message_clear_desc" translatable="false">Dismiss only these samples; real app messages are preserved.</string>
+    <string name="dev_message_previews" translatable="false">消息预览</string>
+    <string name="dev_message_previews_desc" translatable="false">仅限本地的示例，使用应用的真实消息界面。不发送任何请求。离开此屏幕时示例将清除。</string>
+    <string name="dev_message_info" translatable="false">信息预览</string>
+    <string name="dev_message_success" translatable="false">成功预览</string>
+    <string name="dev_message_progress" translatable="false">进度预览</string>
+    <string name="dev_message_warning" translatable="false">警告预览</string>
+    <string name="dev_message_error" translatable="false">错误预览</string>
+    <string name="dev_message_preview_sample" translatable="false">展示主题示例。进度会保留直到被替换或清除。</string>
+    <string name="dev_message_action" translatable="false">可操作错误预览</string>
+    <string name="dev_message_action_body" translatable="false">这是一个带有更长说明的模拟错误。展开或滚动以检查可读性。重试仅确认预览操作，不会联系服务器。</string>
+    <string name="dev_message_retry" translatable="false">重试</string>
+    <string name="dev_message_retry_result" translatable="false">已选择预览重试 — 未发送请求。</string>
+    <string name="dev_message_clear" translatable="false">清除预览</string>
+    <string name="dev_message_clear_desc" translatable="false">仅关闭这些示例，真实应用消息予以保留。</string>
     <string name="profile_follow_server_default">Follow server default</string>
 
     <!-- User-started voice overlay, independent of Device Control. -->

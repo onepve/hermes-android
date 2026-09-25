@@ -129,7 +129,7 @@ def main():
             "sha256": sha256,
             "md5": md5,
             "size": file_size,
-            "changelog": "采用上游官方完整成熟 UI 与 Thinking 思考折叠机制，彻底解耦 Relay/Dashboard/Gateway RPC 沉重耦合，直连 Direct API",
+            "changelog": "支持麦克风极速语音转文字输入，全面汉化客户端中英文提示词条，消除直连模式下无网关路由误报红标",
             "published_at": now_iso,
         }
 
