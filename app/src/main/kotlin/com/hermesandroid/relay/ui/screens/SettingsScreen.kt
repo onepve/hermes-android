@@ -610,43 +610,6 @@ fun SettingsScreen(
                 isDarkTheme = isDarkTheme,
             )
 
-            SettingsSectionHeader(stringResource(R.string.settings_power_tools))
-
-            SettingsCategoryRow(
-                icon = Icons.AutoMirrored.Filled.Message,
-                title = stringResource(R.string.settings_threads),
-                subtitle = stringResource(R.string.settings_threads_desc),
-                onClick = onNavigateToProactiveSettings,
-                isDarkTheme = isDarkTheme,
-            )
-
-            // Terminal, Bridge and Relay sessions removed for clean lightweight AI client
-
-            // === PHASE3-notif-listener-followup: notification companion entry-point ===
-            SettingsCategoryRow(
-                icon = Icons.Filled.Notifications,
-                title = stringResource(R.string.settings_notification_companion),
-                subtitle = stringResource(R.string.settings_notification_companion_desc),                onClick = onNavigateToNotificationCompanion,
-                isDarkTheme = isDarkTheme,
-            )
-            // === END PHASE3-notif-listener-followup ===
-
-            if (BuildFlavor.isSideload) {
-                // === PHASE3-safety-rails: bridge safety entry-point ===
-                SettingsCategoryRow(
-                    icon = Icons.Filled.Security,
-                    title = stringResource(R.string.settings_bridge_safety),
-                    subtitle = stringResource(R.string.settings_bridge_safety_desc),
-                    badge = SettingsStatusPillModel(
-                        label = stringResource(R.string.settings_sideload),
-                        tone = SettingsStatusTone.Info,
-                    ),
-                    onClick = onNavigateToBridgeSafety,
-                    isDarkTheme = isDarkTheme,
-                )
-                // === END PHASE3-safety-rails ===
-            }
-
             SettingsSectionHeader("App")
 
             SettingsCategoryRow(

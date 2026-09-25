@@ -96,7 +96,6 @@ fun AboutScreen(
 
     // Pre-resolved messages for non-composable action callbacks.
     val devUnlockedMsg = stringResource(R.string.about_dev_options_unlocked)
-    val updateCopiedMsg = stringResource(R.string.about_update_copied)
     val emDash = stringResource(R.string.about_em_dash)
 
     // Tap-7x unlock state (mirrors the old SettingsScreen locals)
@@ -280,64 +279,6 @@ fun AboutScreen(
                     }
                     // === END PHASE3-flavor-split ===
 
-                    // Connected relay's plugin version + a soft "newer release
-                    // available" nudge — both flavors, since the relay is
-                    // server-side regardless of app track. Source:
-                    // ConnectionViewModel.relayUpdateInfo, refreshed on each
-                    // auth.ok from the relay's /relay/update-check (the app and
-                    // relay version *independently* — this is the relay's own
-                    // track, not an app-vs-relay numeric compare). Null until a
-                    // paired relay answers, so it simply doesn't render offline.
-                    val relayUpdate by connectionViewModel.relayUpdateInfo.collectAsState()
-                    relayUpdate?.let { ru ->
-                        HorizontalDivider()
-                        val clipboard = LocalClipboardManager.current
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = stringResource(R.string.about_relay),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                                val subtitle = when {
-                                    ru.updateAvailable && !ru.latest.isNullOrBlank() ->
-                                        stringResource(R.string.about_update_available, ru.current, ru.latest)
-                                    ru.current.isNotBlank() -> stringResource(R.string.about_up_to_date, ru.current)
-                                    else -> stringResource(R.string.about_connected)
-                                }
-                                Text(
-                                    text = subtitle,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = if (ru.updateAvailable) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    },
-                                )
-                            }
-                            if (ru.updateAvailable && !ru.updateCommand.isNullOrBlank()) {
-                                TextButton(onClick = {
-                                    clipboard.setText(AnnotatedString(ru.updateCommand))
-                                    UiMessageBus.success(updateCopiedMsg)
-                                }) {
-                                    Text(stringResource(R.string.about_copy_fix))
-                                }
-                            }
-                        }
-                        if (ru.updateAvailable && !ru.updateCommand.isNullOrBlank()) {
-                            Text(
-                                text = stringResource(R.string.about_update_command_body, ru.updateCommand),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                    }
-
                     // Sideload-only: in-app update check. googlePlay builds
                     // get updates through the Play Store, so we hide this
                     // row on that track. UpdateViewModel also short-circuits
@@ -403,22 +344,7 @@ fun AboutScreen(
                     ) {
                         OutlinedButton(
                             onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Codename-11/hermes-relay"))
-                                context.startActivity(intent)
-                            },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_github),
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.size(6.dp))
-                            Text(stringResource(R.string.about_github))
-                        }
-                        OutlinedButton(
-                            onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hermes-relay.dev/docs/"))
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hermes-agent.nousresearch.com/docs"))
                                 context.startActivity(intent)
                             },
                             modifier = Modifier.weight(1f)
@@ -429,16 +355,11 @@ fun AboutScreen(
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.size(6.dp))
-                            Text(stringResource(R.string.about_app_docs))
+                            Text(stringResource(R.string.about_hermes_docs))
                         }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
                         OutlinedButton(
                             onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hermes-agent.nousresearch.com"))
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://dl.onepve.com/hermes/"))
                                 context.startActivity(intent)
                             },
                             modifier = Modifier.weight(1f)
@@ -449,25 +370,8 @@ fun AboutScreen(
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.size(6.dp))
-                            Text(stringResource(R.string.about_hermes_docs))
+                            Text(stringResource(R.string.about_updates))
                         }
-                    }
-
-                    // Privacy policy link
-                    OutlinedButton(
-                        onClick = {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hermes-relay.dev/privacy.html"))
-                            context.startActivity(intent)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Shield,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.size(6.dp))
-                        Text(stringResource(R.string.about_privacy_policy))
                     }
 
                     // What's New

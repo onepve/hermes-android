@@ -1385,7 +1385,7 @@
     <string name="about_title">About</string>
     <string name="about_back">Back</string>
     <string name="about_section_title">About</string>
-    <string name="about_app_name">Hermes-Relay</string>
+    <string name="about_app_name">Hermes</string>
     <string name="about_app_tagline">Native Android client for Hermes Agent</string>
     <string name="about_em_dash">—</string>
     <string name="about_dev_options_unlocked">Developer options unlocked</string>
@@ -1412,7 +1412,7 @@
     <string name="about_hermes_docs">Hermes Docs</string>
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_whats_new">What\'s New in This Version</string>
-    <string name="about_credits">Axiom Labs ❤️ Hermes Agent · Nous Research</string>
+    <string name="about_credits">Hermes Agent · Nous Research</string>
 
     <!-- P1: MediaSettingsScreen -->
     <string name="media_title">Media</string>

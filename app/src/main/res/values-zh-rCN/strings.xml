@@ -1186,7 +1186,7 @@
     <string name="about_title">关于</string>
     <string name="about_back">返回</string>
     <string name="about_section_title">关于</string>
-    <string name="about_app_name">Hermes-Relay</string>
+    <string name="about_app_name">Hermes</string>
     <string name="about_app_tagline">Hermes Agent 的原生 Android 客户端</string>
     <string name="about_em_dash">—</string>
     <string name="about_dev_options_unlocked">开发者选项已解锁</string>
@@ -1213,7 +1213,7 @@
     <string name="about_hermes_docs">Hermes 文档</string>
     <string name="about_privacy_policy">隐私政策</string>
     <string name="about_whats_new">本版本新功能</string>
-    <string name="about_credits">Axiom Labs ❤️ Hermes Agent · Nous Research</string>
+    <string name="about_credits">Hermes Agent · Nous Research</string>
 
     <!-- P1: MediaSettingsScreen -->
     <string name="media_title">媒体</string>

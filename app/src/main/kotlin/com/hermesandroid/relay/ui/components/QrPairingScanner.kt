@@ -333,12 +333,31 @@ private fun parseHermesRelayQr(raw: String): HermesPairingPayload? {
         if (version < 1) return null
         val decoded = json.decodeFromString<HermesPairingPayload>(obj.toString())
         val dashboardAlias = firstString(obj, "dashboardUrl")
-        val decodedWithAliases =
-            if (decoded.dashboardUrl.isNullOrBlank() && dashboardAlias != null) {
-                decoded.copy(dashboardUrl = dashboardAlias)
-            } else {
-                decoded
-            }
+        val keyAlias = firstString(obj, "key", "api_key", "apiKey")
+        val apiUrlAlias = firstString(obj, "api_url", "apiUrl", "server_url", "serverUrl", "url")
+
+        val uriFromApiUrl = if (decoded.host.isBlank() && !apiUrlAlias.isNullOrBlank()) {
+            runCatching { URI(apiUrlAlias) }.getOrNull()
+        } else null
+        val hostFromUrl = uriFromApiUrl?.host.orEmpty()
+        val portFromUrl = uriFromApiUrl?.let { if (it.port > 0) it.port else if (it.scheme.equals("https", ignoreCase = true)) 443 else 80 } ?: 8642
+        val tlsFromUrl = uriFromApiUrl?.scheme.equals("https", ignoreCase = true)
+
+        var decodedWithAliases = decoded
+        if (decodedWithAliases.dashboardUrl.isNullOrBlank() && dashboardAlias != null) {
+            decodedWithAliases = decodedWithAliases.copy(dashboardUrl = dashboardAlias)
+        }
+        if (decodedWithAliases.key.isBlank() && !keyAlias.isNullOrBlank()) {
+            decodedWithAliases = decodedWithAliases.copy(key = keyAlias)
+        }
+        if (decodedWithAliases.host.isBlank() && hostFromUrl.isNotBlank()) {
+            decodedWithAliases = decodedWithAliases.copy(
+                host = hostFromUrl,
+                port = portFromUrl,
+                tls = tlsFromUrl,
+            )
+        }
+
         if (decodedWithAliases.host.isBlank() &&
             !decodedWithAliases.hasDashboardRelayIdentity()
         ) return null
@@ -402,6 +421,14 @@ private fun synthesizeDashboardRelayEndpoint(
 private fun parseGenericApiJsonQr(raw: String): HermesPairingPayload? {
     return try {
         val obj = json.decodeFromString<JsonObject>(raw)
+        val host = firstString(obj, "host", "hostname")
+        val port = obj["port"]?.jsonPrimitive?.intOrNull ?: 8642
+        val tls = obj["tls"]?.jsonPrimitive?.booleanOrNull ?: false
+        val constructedUrl = if (!host.isNullOrBlank()) {
+            val scheme = if (tls) "https" else "http"
+            "$scheme://$host:$port"
+        } else null
+
         val apiUrl = firstString(
             obj,
             "api_url",
@@ -409,7 +436,7 @@ private fun parseGenericApiJsonQr(raw: String): HermesPairingPayload? {
             "server_url",
             "serverUrl",
             "url",
-        ) ?: return null
+        ) ?: constructedUrl ?: return null
         val apiKey = firstString(obj, "api_key", "apiKey", "key").orEmpty()
         val dashboardUrl = firstString(obj, "dashboard_url", "dashboardUrl")
         payloadFromApiUrl(apiUrl, apiKey, dashboardUrl)

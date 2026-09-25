@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit
  * and returns an [UpdateCheckResult].
  */
 object UpdateChecker {
-    private const val MANIFEST_URL = "https://dl.onepve.com/hermes-relay/version.json"
-    private const val USER_AGENT = "hermes-relay-android"
+    private const val MANIFEST_URL = "https://dl.onepve.com/hermes/version.json"
+    private const val USER_AGENT = "hermes-android"
 
     private val json = Json {
         ignoreUnknownKeys = true
