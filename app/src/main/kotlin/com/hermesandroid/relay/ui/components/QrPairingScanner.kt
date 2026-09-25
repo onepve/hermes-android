@@ -422,8 +422,8 @@ private fun parseGenericApiJsonQr(raw: String): HermesPairingPayload? {
     return try {
         val obj = json.decodeFromString<JsonObject>(raw)
         val host = firstString(obj, "host", "hostname")
-        val port = obj["port"]?.jsonPrimitive?.intOrNull ?: 8642
-        val tls = obj["tls"]?.jsonPrimitive?.booleanOrNull ?: false
+        val port = obj["port"]?.jsonPrimitive?.contentOrNull?.toIntOrNull() ?: 8642
+        val tls = obj["tls"]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() ?: false
         val constructedUrl = if (!host.isNullOrBlank()) {
             val scheme = if (tls) "https" else "http"
             "$scheme://$host:$port"
