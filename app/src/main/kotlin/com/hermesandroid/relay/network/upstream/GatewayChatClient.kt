@@ -244,12 +244,11 @@ class GatewayChatClient(
 
         /**
          * How long a single mid-turn reconnect keeps retrying (with backoff)
-         * before the turn is failed. Sized to outlast a typical mobile radio
-         * blip / Wi-Fi⇄cellular handover (seconds) — the old behavior fired
-         * two connect attempts in ~24ms and gave up, abandoning a turn the
-         * server then finished and whose answer was silently dropped.
+         * before the turn is failed. Kept generous (120s) so background switches,
+         * mobile radio blips and screen-off Doze periods do not prematurely kill
+         * long-running agent turns.
          */
-        private const val MAX_MIDTURN_REJOIN_MS = 20_000L
+        private const val MAX_MIDTURN_REJOIN_MS = 120_000L
 
         /**
          * After a route RETARGET (LAN⇄Tailscale mid-turn), the fresh socket
@@ -4292,7 +4291,7 @@ class GatewayChatClient(
             backoffMs = (backoffMs * 2).coerceAtMost(5_000L)
         }
         if (activeTurn === turn) activeTurn = null
-        if (!turn.ended) turn.failFromTransport("Connection to the gateway was lost")
+        if (!turn.ended) turn.failFromTransport("与网关的连接已中断，正在尝试恢复…")
     }
 
     private fun closeSocket(reason: String) {

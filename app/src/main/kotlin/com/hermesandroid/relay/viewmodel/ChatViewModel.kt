@@ -7527,6 +7527,10 @@ class ChatViewModel : ViewModel() {
                     val context = appContext
                     if (foreground) {
                         context?.let(InteractionRequestNotifier::cancelAll)
+                        streamRecovery?.triggerImmediatePoll()
+                        chatHandler?.currentSessionId?.value?.let { currentSessionId ->
+                            syncSessionOnForeground(currentSessionId)
+                        }
                     } else {
                         scheduleCheckpointWrite(immediate = true)
                         val handler = chatHandler
@@ -7544,6 +7548,30 @@ class ChatViewModel : ViewModel() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun syncSessionOnForeground(sessionId: String) {
+        val handler = chatHandler ?: return
+        viewModelScope.launch {
+            try {
+                val lastMsg = handler.messages.value.lastOrNull()
+                val needsSync = _isStreaming.value || _recoveringAnswer.value || (lastMsg?.role == "user")
+                if (needsSync || streamRecovery?.isActive == true) {
+                    val messages = loadSessionHistory(sessionId)
+                    if (messages.isNotEmpty() && handler.currentSessionId.value == sessionId) {
+                        handler.loadMessageHistory(messages)
+                        val lastAssistant = messages.lastOrNull { it.role == "assistant" && !it.contentText.isNullOrBlank() }
+                        if (lastAssistant != null) {
+                            _recoveringAnswer.value = false
+                            _isStreaming.value = false
+                            clearTurnCheckpoint()
+                        }
+                    }
+                }
+            } catch (_: Exception) {
+                // 静默失败，不打扰前台用户交互
             }
         }
     }
@@ -8400,12 +8428,12 @@ class ChatViewModel : ViewModel() {
                     _recoveringAnswer.value = false
                     val message = when (reason) {
                         ChatStreamRecovery.GiveUpReason.RUN_NOT_FOUND ->
-                            "The unfinished message was not found on the server — please resend."
+                            "未在服务端找到未完成的消息记录，请重新发送。"
                         ChatStreamRecovery.GiveUpReason.TIMED_OUT ->
-                            "The unfinished reply did not complete in the recovery window."
+                            "后台任务执行超时或已在服务端完成，请刷新会话查看最新状态。"
                         ChatStreamRecovery.GiveUpReason.HISTORY_UNAVAILABLE ->
                             appContext?.getString(R.string.chat_profile_history_unavailable)
-                                ?: "The active profile's conversation history could not be reached. Reconnect and try again."
+                                ?: "无法获取当前会话历史记录，请检查网络连接后重试。"
                     }
                     clearTurnCheckpoint()
                     AppAnalytics.onStreamError()
