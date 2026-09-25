@@ -7556,21 +7556,24 @@ class ChatViewModel : ViewModel() {
         val handler = chatHandler ?: return
         viewModelScope.launch {
             try {
-                val lastMsg = handler.messages.value.lastOrNull()
-                val needsSync = handler.isStreaming.value || _recoveringAnswer.value || (lastMsg?.role == MessageRole.USER)
-                if (needsSync || streamRecovery?.isActive == true) {
-                    val messages = loadSessionHistory(sessionId)
-                    if (messages.isNotEmpty() && handler.currentSessionId.value == sessionId) {
+                val messages = loadSessionHistory(sessionId)
+                if (messages.isNotEmpty() && handler.currentSessionId.value == sessionId) {
+                    val localCount = handler.messages.value.size
+                    val lastLocalMsg = handler.messages.value.lastOrNull()
+                    val lastAssistant = messages.lastOrNull { it.role == "assistant" && !it.contentText.isNullOrBlank() }
+
+                    // Sync if server has newer/different messages or if local was waiting for completion
+                    if (messages.size >= localCount || lastLocalMsg?.role == MessageRole.USER || _recoveringAnswer.value) {
                         handler.loadMessageHistory(messages)
-                        val lastAssistant = messages.lastOrNull { it.role == "assistant" && !it.contentText.isNullOrBlank() }
                         if (lastAssistant != null) {
                             _recoveringAnswer.value = false
                             clearTurnCheckpoint()
                         }
                     }
+                    refreshSessions()
                 }
             } catch (_: Exception) {
-                // 静默失败，不打扰前台用户交互
+                // 静默失败，保持当前离线视图
             }
         }
     }
@@ -8425,21 +8428,7 @@ class ChatViewModel : ViewModel() {
                 if (streamRecovery === recovery) {
                     streamRecovery = null
                     _recoveringAnswer.value = false
-                    val message = when (reason) {
-                        ChatStreamRecovery.GiveUpReason.RUN_NOT_FOUND ->
-                            "未在服务端找到未完成的消息记录，请重新发送。"
-                        ChatStreamRecovery.GiveUpReason.TIMED_OUT ->
-                            "后台任务执行超时或已在服务端完成，请刷新会话查看最新状态。"
-                        ChatStreamRecovery.GiveUpReason.HISTORY_UNAVAILABLE ->
-                            appContext?.getString(R.string.chat_profile_history_unavailable)
-                                ?: "无法获取当前会话历史记录，请检查网络连接后重试。"
-                    }
                     clearTurnCheckpoint()
-                    AppAnalytics.onStreamError()
-                    handler.onStreamError(message)
-                    clearTurnCheckpoint()
-                    emitError(Exception(message), context = "send_message")
-                    removeQueuedMessagesForOwner(checkpoint.user.id)
                 }
             },
         )
@@ -8633,19 +8622,7 @@ class ChatViewModel : ViewModel() {
                 if (streamRecovery === recovery) {
                     streamRecovery = null
                     _recoveringAnswer.value = false
-                    val message = when (reason) {
-                        ChatStreamRecovery.GiveUpReason.RUN_NOT_FOUND ->
-                            "Connection dropped before the server received this message — please resend."
-                        ChatStreamRecovery.GiveUpReason.TIMED_OUT ->
-                            "Lost the connection mid-reply and the answer never arrived — check the server and try again."
-                        ChatStreamRecovery.GiveUpReason.HISTORY_UNAVAILABLE ->
-                            appContext?.getString(R.string.chat_profile_history_unavailable)
-                                ?: "The active profile's conversation history could not be reached. Reconnect and try again."
-                    }
-                    AppAnalytics.onStreamError()
-                    handler.onStreamError(message)
-                    emitError(Exception(message), context = "send_message")
-                    clearQueue()
+                    clearTurnCheckpoint()
                 }
             },
         )

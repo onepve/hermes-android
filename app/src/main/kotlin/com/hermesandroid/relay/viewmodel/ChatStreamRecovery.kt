@@ -1,5 +1,6 @@
 package com.hermesandroid.relay.viewmodel
 
+import android.util.Log
 import com.hermesandroid.relay.network.upstream.models.MessageItem
 import com.hermesandroid.relay.util.AppForegroundTracker
 import kotlinx.coroutines.CancellationException
@@ -11,12 +12,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
 /**
- * Client-side answer recovery for a sessions-endpoint chat stream that died on
- * a transport error while the server kept working (issue #166).
+ * Client-side asynchronous sync engine (Telegram/Feishu architecture).
  *
- * Enhanced for asynchronous background execution (Telegram/Feishu style):
- * - Tolerates background network sleep and Doze mode without early give-up.
- * - Supports immediate wake-up poll via [triggerImmediatePoll] when returning to foreground.
+ * Core principles:
+ * 1. The client is a pure VIEWER; server-side tasks are autonomous and NEVER killed by client timeouts.
+ * 2. NO timeouts. The engine continues syncing until the final answer is persisted.
+ * 3. Network disconnects (Doze mode, screen-off, app switching) NEVER cause a give-up or error banner.
+ * 4. Immediate wake-up on foreground return via [triggerImmediatePoll].
  */
 class ChatStreamRecovery(
     private val scope: CoroutineScope,
@@ -27,8 +29,7 @@ class ChatStreamRecovery(
     data class Timing(
         val pollIntervalMs: Long = 3_000L,
         val maxPollIntervalMs: Long = 15_000L,
-        val recoveryWindowMs: Long = 60L * 60_000L, // 60 minutes for long background jobs
-        val maxConsecutiveFetchFailures: Int = 20,
+        val backgroundPollIntervalMs: Long = 20_000L,
     )
 
     enum class GiveUpReason {
@@ -49,7 +50,7 @@ class ChatStreamRecovery(
         get() = job?.isActive == true
 
     /**
-     * Wake the recovery loop immediately (e.g. when app returns to foreground).
+     * Wake the sync loop immediately (e.g. when app returns to foreground).
      */
     fun triggerImmediatePoll() {
         wakeSignal.trySend(Unit)
@@ -60,67 +61,54 @@ class ChatStreamRecovery(
         priorUserMessageCount: Int,
         onIntermediateHistory: (List<MessageItem>) -> Unit,
         onRecovered: (List<MessageItem>) -> Unit,
-        onGaveUp: (GiveUpReason) -> Unit,
+        onGaveUp: (GiveUpReason) -> Unit = {},
     ) {
         job?.cancel()
         val pending = pendingUserText.trim()
         val priorUsers = priorUserMessageCount.coerceAtLeast(0)
         job = scope.launch {
             var delayMs = timing.pollIntervalMs
-            var elapsedMs = 0L
             var lastSignature: String? = null
             var lastSurfacedCount = -1
-            var unanchoredPolls = 0
-            var consecutiveFetchFailures = 0
 
-            while (elapsedMs < timing.recoveryWindowMs) {
-                // Wait for interval or immediate wake signal from foreground transition
-                val woken = withTimeoutOrNull(delayMs) {
+            // Infinite sync loop: client never prematurely gives up on server tasks
+            while (true) {
+                val isForeground = AppForegroundTracker.isForeground.value
+                val currentTargetDelay = if (isForeground) delayMs else timing.backgroundPollIntervalMs
+
+                // Wait for interval or immediate wake signal when coming back to foreground
+                val woken = withTimeoutOrNull(currentTargetDelay) {
                     wakeSignal.receive()
                 } != null
 
-                if (!woken) {
-                    elapsedMs += delayMs
-                    delayMs = (delayMs * 15 / 10).coerceAtMost(timing.maxPollIntervalMs)
-                } else {
-                    // Reset backoff on explicit wake
+                if (woken) {
                     delayMs = timing.pollIntervalMs
+                } else if (isForeground) {
+                    delayMs = (delayMs * 15 / 10).coerceAtMost(timing.maxPollIntervalMs)
                 }
 
                 val items = try {
                     fetchHistory()
                 } catch (e: CancellationException) {
                     throw e
-                } catch (_: Exception) {
-                    // While backgrounded, network disconnects/sleeps are expected; do not penalize failures
-                    val isForeground = AppForegroundTracker.isForeground.value
-                    if (isForeground) {
-                        consecutiveFetchFailures++
-                        if (consecutiveFetchFailures >= timing.maxConsecutiveFetchFailures) {
-                            onGaveUp(GiveUpReason.HISTORY_UNAVAILABLE)
-                            return@launch
-                        }
-                    }
+                } catch (e: Exception) {
+                    Log.d("ChatStreamRecovery", "Background sync transient network glitch: ${e.message}")
                     continue
                 }
 
-                consecutiveFetchFailures = 0
                 if (items.isEmpty()) continue
 
                 when (val anchor = resolveAnchor(items, pending, priorUsers)) {
                     is Anchor.NotEstablished -> {
                         lastSignature = null
-                        // Give server more opportunities (10 polls) to write session store before declaring not found
-                        if (++unanchoredPolls >= 10) {
-                            onGaveUp(GiveUpReason.RUN_NOT_FOUND)
-                            return@launch
-                        }
+                        // Server is still processing or preparing; continue polling without giving up
+                        continue
                     }
 
                     is Anchor.Found -> {
-                        unanchoredPolls = 0
                         val signature = answerSignature(items, anchor.index)
                         if (signature != null && signature == lastSignature) {
+                            // Stable final assistant answer reached! Complete!
                             onRecovered(items)
                             return@launch
                         }
@@ -133,7 +121,6 @@ class ChatStreamRecovery(
                     }
                 }
             }
-            onGaveUp(GiveUpReason.TIMED_OUT)
         }
     }
 
@@ -151,8 +138,12 @@ class ChatStreamRecovery(
         if (userIndices.size <= priorUserCount) return Anchor.NotEstablished
         val anchorPos = userIndices[priorUserCount]
         val storedText = items[anchorPos].contentText?.trim().orEmpty()
-        // Tolerant match: exact match, or either contains the other (for multi-modal prefixes)
+        // Tolerant match: exact match, or substring match (for multi-modal / voice prefixes)
         if (storedText != pendingUserText && !storedText.contains(pendingUserText) && !pendingUserText.contains(storedText)) {
+            // Even if text differs slightly (e.g. prompt rewrite), if index matches positional turn, accept it
+            if (userIndices.size == priorUserCount + 1) {
+                return Anchor.Found(anchorPos)
+            }
             return Anchor.NotEstablished
         }
         return Anchor.Found(anchorPos)
