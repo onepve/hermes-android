@@ -167,6 +167,9 @@ import android.content.ClipData
 import android.app.Activity
 import android.content.Intent
 import android.speech.RecognizerIntent
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import android.net.Uri
 import android.provider.Settings
 import com.hermesandroid.relay.ui.UiMessageBus
@@ -1382,6 +1385,56 @@ fun ChatScreen(
     )
 
     var inputText by remember { mutableStateOf("") }
+
+    val speechInputLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val spokenText = result.data
+                ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                ?.firstOrNull()
+                ?.trim()
+            if (!spokenText.isNullOrBlank()) {
+                inputText = if (inputText.isBlank()) spokenText else "$inputText $spokenText"
+            }
+        }
+    }
+
+    val recordAudioPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
+                putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，识别为中文后填入…")
+            }
+            try {
+                speechInputLauncher.launch(intent)
+            } catch (_: Exception) {
+                UiMessageBus.warning("未检测到系统语音识别服务")
+            }
+        } else {
+            UiMessageBus.warning("需要麦克风权限以使用语音输入")
+        }
+    }
+
+    val handleVoiceInput = {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
+                putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，识别为中文后填入…")
+            }
+            try {
+                speechInputLauncher.launch(intent)
+            } catch (_: Exception) {
+                UiMessageBus.warning("未检测到系统语音识别服务")
+            }
+        } else {
+            recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
     val composerDraftKey = remember(
         activeConnection?.id,
         selectedProfile?.name,
