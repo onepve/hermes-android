@@ -353,6 +353,7 @@ data class Attachment(
     val composerRawText: String? = null,
 ) {
     val isImage: Boolean get() = contentType.startsWith("image/")
+    val isAudio: Boolean get() = contentType.startsWith("audio/")
 
     /**
      * How the UI should render this attachment, derived from [contentType].

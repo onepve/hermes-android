@@ -2651,12 +2651,12 @@ class VoiceViewModel(application: Application) : AndroidViewModel(application) {
         val p = player
         if (audioClient == null || p == null) {
             onResult(Result.failure(IllegalStateException("Voice pipeline not initialized")))
-            UiMessageBus.error("Voice test failed: pipeline not initialized")
+            UiMessageBus.error("语音测试失败：管线未初始化")
             setError("Voice pipeline not initialized")
             return
         }
         val feedbackKey = "voice-test-${System.nanoTime()}"
-        UiMessageBus.post("Testing voice…", severity = UiMessageSeverity.Status, ttlMillis = 0L, key = feedbackKey)
+        UiMessageBus.post("正在测试语音…", severity = UiMessageSeverity.Status, ttlMillis = 0L, key = feedbackKey)
         viewModelScope.launch {
             val profileAwareResult = if (audioClient.route == VoiceAudioRoute.Relay && relayClient != null) {
                 testVoiceViaVoiceOutput(relayClient, sample)
@@ -2667,7 +2667,7 @@ class VoiceViewModel(application: Application) : AndroidViewModel(application) {
                 if (profileAwareResult.isSuccess) {
                     UiMessageBus.clear(feedbackKey)
                     onResult(Result.success(Unit))
-                    UiMessageBus.success("Voice test successful")
+                    UiMessageBus.success("语音测试成功")
                     return@launch
                 }
                 Log.w(TAG, "profile-aware voice test failed; falling back to legacy synthesize: ${profileAwareResult.exceptionOrNull()?.message}")
@@ -2686,7 +2686,7 @@ class VoiceViewModel(application: Application) : AndroidViewModel(application) {
             if (file == null) {
                 UiMessageBus.clear(feedbackKey)
                 onResult(Result.failure(IllegalStateException("No audio returned")))
-                UiMessageBus.error("Voice test failed: no audio returned")
+                UiMessageBus.error("语音测试失败：未返回音频")
                 return@launch
             }
             trackTtsFile(file)
@@ -2695,14 +2695,14 @@ class VoiceViewModel(application: Application) : AndroidViewModel(application) {
                 p.awaitCompletion()
                 UiMessageBus.clear(feedbackKey)
                 onResult(Result.success(Unit))
-                UiMessageBus.success("Voice test successful")
+                UiMessageBus.success("语音测试成功")
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
                 Log.w(TAG, "test playback failed: ${e.message}")
                 UiMessageBus.clear(feedbackKey)
                 onResult(Result.failure(e))
-                UiMessageBus.error("Voice test failed: ${e.message ?: "playback error"}")
+                UiMessageBus.error("语音测试失败: ${e.message ?: "播放错误"}")
             }
         }.invokeOnCompletion { UiMessageBus.clear(feedbackKey) }
     }
@@ -2931,12 +2931,12 @@ class VoiceViewModel(application: Application) : AndroidViewModel(application) {
         val pcmPlayer = realtimePcmPlayer
         if (client == null || pcmPlayer == null) {
             onResult(Result.failure(IllegalStateException("Voice pipeline not initialized")))
-            UiMessageBus.error("Realtime test failed: pipeline not initialized")
+            UiMessageBus.error("实时语音测试失败：管线未初始化")
             setError("Voice pipeline not initialized")
             return
         }
         val feedbackKey = "realtime-test-${System.nanoTime()}"
-        UiMessageBus.post("Testing Realtime Agent...", severity = UiMessageSeverity.Status, ttlMillis = 0L, key = feedbackKey)
+        UiMessageBus.post("正在测试实时语音 Agent…", severity = UiMessageSeverity.Status, ttlMillis = 0L, key = feedbackKey)
         viewModelScope.launch {
             DiagnosticsLog.record(
                 category = DiagnosticCategory.Voice,
@@ -2983,7 +2983,7 @@ class VoiceViewModel(application: Application) : AndroidViewModel(application) {
             if (audioBytes.get() <= 0) {
                 pcmPlayer.stop()
                 onResult(Result.failure(IllegalStateException("Provider returned no audio")))
-                UiMessageBus.error("Realtime test failed: no audio returned")
+                UiMessageBus.error("实时语音测试失败：未返回音频")
                 DiagnosticsLog.record(
                     category = DiagnosticCategory.Voice,
                     severity = DiagnosticSeverity.Error,
@@ -2997,7 +2997,7 @@ class VoiceViewModel(application: Application) : AndroidViewModel(application) {
             delay(drainMs)
             pcmPlayer.stop()
             onResult(Result.success(Unit))
-            UiMessageBus.success("Realtime test successful")
+            UiMessageBus.success("实时语音测试成功")
             DiagnosticsLog.record(
                 category = DiagnosticCategory.Voice,
                 severity = DiagnosticSeverity.Info,

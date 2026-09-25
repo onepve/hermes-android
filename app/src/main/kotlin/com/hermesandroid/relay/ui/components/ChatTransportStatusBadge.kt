@@ -104,34 +104,34 @@ fun resolveChatTransportStatus(
 
 private fun gatewayFallbackReason(availability: GatewayAvailability): String =
     when (availability) {
-        GatewayAvailability.SignInRequired -> "Gateway sign-in required"
-        GatewayAvailability.Unreachable -> "Gateway unavailable"
-        GatewayAvailability.Unsupported -> "Gateway unsupported"
-        GatewayAvailability.Unknown -> "Checking Gateway"
-        GatewayAvailability.Ready -> "Gateway ready"
+        GatewayAvailability.SignInRequired -> "网关需要登录"
+        GatewayAvailability.Unreachable -> "网关不可用"
+        GatewayAvailability.Unsupported -> "网关不受支持"
+        GatewayAvailability.Unknown -> "正在检查网关"
+        GatewayAvailability.Ready -> "网关就绪"
     }
 
 private fun ChatTransportTier.plainName(): String =
     when (this) {
-        ChatTransportTier.Gateway -> "Gateway"
+        ChatTransportTier.Gateway -> "网关"
         ChatTransportTier.Sessions -> "Direct API"
         ChatTransportTier.Completions -> "Direct API"
         ChatTransportTier.Runs -> "Direct API"
-        ChatTransportTier.Offline -> "offline"
+        ChatTransportTier.Offline -> "离线"
     }
 
 private fun ChatTransportTier.detailText(): String =
     when (this) {
         ChatTransportTier.Gateway ->
-            "Hermes Chat uses the signed-in Dashboard connection."
+            "Hermes 聊天使用已登录的控制台连接。"
         ChatTransportTier.Sessions ->
-            "Direct API compatibility chat with server-side session history."
+            "Direct API 直连兼容聊天（带服务端会话历史）。"
         ChatTransportTier.Completions ->
-            "Direct API compatibility chat."
+            "Direct API 直连兼容聊天。"
         ChatTransportTier.Runs ->
-            "Direct API compatibility chat with streamed run events."
+            "Direct API 直连兼容聊天（带流式运行事件）。"
         ChatTransportTier.Offline ->
-            "No chat transport is reachable."
+            "没有可达的聊天传输通道。"
     }
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -178,6 +178,17 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.runtime.mutableIntStateOf
+import com.hermesandroid.relay.audio.VoiceRecorder
+import android.util.Base64
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import androidx.compose.ui.text.font.FontWeight
 import com.hermesandroid.relay.data.AgentDisplay
 import com.hermesandroid.relay.data.Attachment
 import com.hermesandroid.relay.data.ChatMessage
@@ -852,57 +863,6 @@ fun ChatScreen(
     // request; on grant, latch the pending-enter and fire enterVoiceMode() in
     // the callback. Denial shows an inline banner above the input.
     val context = LocalContext.current
-    val speechInputLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val spokenText = result.data
-                ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                ?.firstOrNull()
-                ?.trim()
-            if (!spokenText.isNullOrBlank()) {
-                val current = chatViewModel.inputText
-                val combined = if (current.isBlank()) spokenText else "$current $spokenText"
-                chatViewModel.setInputText(combined)
-            }
-        }
-    }
-
-    val recordAudioPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
-                putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，识别为中文后填入…")
-            }
-            try {
-                speechInputLauncher.launch(intent)
-            } catch (_: Exception) {
-                UiMessageBus.warning("未检测到系统语音识别服务")
-            }
-        } else {
-            UiMessageBus.warning("需要麦克风权限以使用语音输入")
-        }
-    }
-
-    val handleVoiceInput: () -> Unit = {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
-                putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，识别为中文后填入…")
-            }
-            try {
-                speechInputLauncher.launch(intent)
-            } catch (_: Exception) {
-                UiMessageBus.warning("未检测到系统语音识别服务")
-            }
-        } else {
-            recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-        }
-    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val voiceOverlayHost = remember { VoiceOverlayHost.install(context) }
     val assistantSessionActive by AssistantAppSessionState.active.collectAsState()
@@ -1384,19 +1344,67 @@ fun ChatScreen(
         label = "toolBurst"
     )
 
+    val scope = rememberCoroutineScope()
     var inputText by remember { mutableStateOf("") }
 
-    val speechInputLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val spokenText = result.data
-                ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                ?.firstOrNull()
-                ?.trim()
-            if (!spokenText.isNullOrBlank()) {
-                inputText = if (inputText.isBlank()) spokenText else "$inputText $spokenText"
+    val voiceRecorder = remember { VoiceRecorder(context, scope) }
+    DisposableEffect(Unit) {
+        onDispose {
+            if (voiceRecorder.isRecording()) {
+                voiceRecorder.cancel()
             }
+        }
+    }
+    var isVoiceRecording by remember { mutableStateOf(false) }
+    var voiceRecordSeconds by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(isVoiceRecording) {
+        if (isVoiceRecording) {
+            voiceRecordSeconds = 0
+            while (isActive) {
+                delay(1000)
+                voiceRecordSeconds++
+            }
+        }
+    }
+
+    val cancelVoiceRecording: () -> Unit = {
+        runCatching { voiceRecorder.cancel() }
+        isVoiceRecording = false
+        voiceRecordSeconds = 0
+    }
+
+    val finishVoiceRecording: () -> Unit = {
+        runCatching {
+            val recordedFile = voiceRecorder.stopRecording()
+            isVoiceRecording = false
+            if (recordedFile.exists() && recordedFile.length() > 0) {
+                val bytes = recordedFile.readBytes()
+                val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
+                val attachment = Attachment(
+                    contentType = "audio/wav",
+                    content = base64,
+                    fileName = "voice_${System.currentTimeMillis()}.wav",
+                    fileSize = bytes.size.toLong(),
+                )
+                chatViewModel.addAttachment(attachment)
+                if (inputText.isBlank()) {
+                    inputText = "请听取这段语音并用中文回复。"
+                }
+            }
+        }.onFailure {
+            isVoiceRecording = false
+            UiMessageBus.warning("停止录音失败: ${it.message}")
+        }
+    }
+
+    val startVoiceRecording: () -> Unit = {
+        runCatching {
+            voiceRecorder.startRecording()
+            isVoiceRecording = true
+            voiceRecordSeconds = 0
+        }.onFailure {
+            UiMessageBus.warning("启动录音失败: ${it.message}")
         }
     }
 
@@ -1404,35 +1412,25 @@ fun ChatScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
-                putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，识别为中文后填入…")
-            }
-            try {
-                speechInputLauncher.launch(intent)
-            } catch (_: Exception) {
-                UiMessageBus.warning("未检测到系统语音识别服务")
-            }
+            startVoiceRecording()
         } else {
-            UiMessageBus.warning("需要麦克风权限以使用语音输入")
+            UiMessageBus.warning("需要麦克风权限以使用语音录入")
         }
     }
 
-    val handleVoiceInput = {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
-                putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，识别为中文后填入…")
-            }
-            try {
-                speechInputLauncher.launch(intent)
-            } catch (_: Exception) {
-                UiMessageBus.warning("未检测到系统语音识别服务")
-            }
+    val handleVoiceInput: () -> Unit = {
+        if (isVoiceRecording) {
+            finishVoiceRecording()
         } else {
-            recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            val granted = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO,
+            ) == PackageManager.PERMISSION_GRANTED
+            if (granted) {
+                startVoiceRecording()
+            } else {
+                recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            }
         }
     }
     val composerDraftKey = remember(
@@ -1668,7 +1666,6 @@ fun ChatScreen(
     DisposableEffect(petCompanionCoordinator) {
         onDispose { petCompanionCoordinator.clearSurface("chat") }
     }
-    val scope = rememberCoroutineScope()
     val latestComposerDraft by rememberUpdatedState {
         activeComposerDraftKey?.let { key ->
             key to ChatComposerDraft(
@@ -2781,7 +2778,7 @@ fun ChatScreen(
                         if (opened) scope.launch { drawerState.close() }
                     } else {
                         scope.launch {
-                            snackbarHostState.showSnackbar("Profile $profileName is not available.")
+                            snackbarHostState.showSnackbar("配置文件 $profileName 不可用。")
                         }
                     }
                 },
@@ -3844,7 +3841,7 @@ fun ChatScreen(
                                         } else {
                                             scope.launch {
                                                 snackbarHostState.showSnackbar(
-                                                    message = "Profile ${reference.profile} is not available.",
+                                                    message = "配置文件 ${reference.profile} 不可用。",
                                                     duration = SnackbarDuration.Short,
                                                 )
                                             }
@@ -4620,6 +4617,63 @@ fun ChatScreen(
                     onClick = onNavigateToGitWorkspace,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 )
+            }
+
+            AnimatedVisibility(
+                visible = isVoiceRecording,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically(),
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    tonalElevation = 2.dp,
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Red),
+                            )
+                            Text(
+                                text = "正在录音 (${String.format(java.util.Locale.US, "%02d:%02d", voiceRecordSeconds / 60, voiceRecordSeconds % 60)})",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            TextButton(
+                                onClick = cancelVoiceRecording,
+                            ) {
+                                Text("取消", color = MaterialTheme.colorScheme.error)
+                            }
+                            FilledTonalButton(
+                                onClick = finishVoiceRecording,
+                            ) {
+                                Icon(Icons.Filled.Check, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text("发送语音")
+                            }
+                        }
+                    }
+                }
             }
 
             ChatInputBar(

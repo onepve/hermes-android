@@ -332,6 +332,7 @@ internal fun buildChatCompletionsStreamPayload(
     val effectiveSystem = mergeEphemeralContext(systemMessage, digest)
     val plainTurns = plainSyntheticTurns(voiceIntentMessages)
     val imageAttachments = attachments.orEmpty().filter { it.isImage }
+    val audioAttachments = attachments.orEmpty().filter { it.isAudio }
     val payload = buildJsonObject {
         put("model", resolvedModel)
         put("stream", true)
@@ -346,7 +347,7 @@ internal fun buildChatCompletionsStreamPayload(
             plainTurns.forEach { add(it) }
             addJsonObject {
                 put("role", "user")
-                if (imageAttachments.isNotEmpty()) {
+                if (imageAttachments.isNotEmpty() || audioAttachments.isNotEmpty()) {
                     put("content", buildJsonArray {
                         addJsonObject {
                             put("type", "text")
@@ -360,6 +361,15 @@ internal fun buildChatCompletionsStreamPayload(
                                 }
                             }
                         }
+                        audioAttachments.forEach { att ->
+                            addJsonObject {
+                                put("type", "input_audio")
+                                putJsonObject("input_audio") {
+                                    put("data", att.content)
+                                    put("format", if (att.contentType.contains("wav")) "wav" else "mp3")
+                                }
+                            }
+                        }
                     })
                 } else {
                     put("content", message)
@@ -369,6 +379,6 @@ internal fun buildChatCompletionsStreamPayload(
     }
     return ChatPayloadResult(
         payload = payload,
-        droppedAttachments = attachments.orEmpty().filter { !it.isImage },
+        droppedAttachments = attachments.orEmpty().filter { !it.isImage && !it.isAudio },
     )
 }

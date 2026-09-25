@@ -468,6 +468,16 @@ fun ChatInputBar(
                             onDismissRequest = { attachMenuExpanded = false },
                         ) {
                             DropdownMenuItem(
+                                text = { Text("录制语音") },
+                                leadingIcon = {
+                                    Icon(Icons.Filled.Mic, contentDescription = null)
+                                },
+                                onClick = {
+                                    attachMenuExpanded = false
+                                    onVoice()
+                                },
+                            )
+                            DropdownMenuItem(
                                 text = { Text(stringResource(R.string.chat_input_photos)) },
                                 leadingIcon = {
                                     Icon(Icons.Filled.PhotoLibrary, contentDescription = null)
