@@ -508,19 +508,19 @@ fun SupervisedControlsScreen(
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(attachments = it)))
                 }
                 HorizontalDivider()
-                SupervisedSwitchRow("Voice", "允许使用标准 Hermes 语音", policy.capabilities.voice) {
+                SupervisedSwitchRow("语音", "允许使用标准 Hermes 语音", policy.capabilities.voice) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(voice = it)))
                 }
                 HorizontalDivider()
-                SupervisedSwitchRow("Generated images", "Show images returned in chat", policy.capabilities.generatedImages) {
+                SupervisedSwitchRow("生成图片", "显示聊天中返回的图片", policy.capabilities.generatedImages) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(generatedImages = it)))
                 }
                 HorizontalDivider()
-                SupervisedSwitchRow("Conversation history", "允许查看与此智能体的过往聊天", policy.capabilities.conversationHistory) {
+                SupervisedSwitchRow("对话历史", "允许查看与此智能体的过往聊天", policy.capabilities.conversationHistory) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(conversationHistory = it)))
                 }
                 HorizontalDivider()
-                SupervisedSwitchRow("Share generated images", "允许 Android 系统分享与保存", policy.capabilities.shareGeneratedImages) {
+                SupervisedSwitchRow("分享生成图片", "允许 Android 系统分享与保存", policy.capabilities.shareGeneratedImages) {
                     onPolicyChange(policy.copy(capabilities = policy.capabilities.copy(shareGeneratedImages = it)))
                 }
                 if (policy.capabilities.attachments) {

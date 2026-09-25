@@ -841,13 +841,13 @@ private fun AuthError(error: String?) {
 private fun SupervisedParentAuthResult.toUserMessage(): String = when (this) {
     SupervisedParentAuthResult.Success -> ""
     is SupervisedParentAuthResult.Invalid -> if (attemptsBeforeDelay > 0) {
-        "Incorrect parent credential. $attemptsBeforeDelay attempts remain before a delay."
+        "家长凭据不正确，还剩 $attemptsBeforeDelay 次尝试机会。"
     } else {
         "家长凭据不正确。"
     }
     is SupervisedParentAuthResult.Throttled -> {
         val seconds = ((retryAfterMillis + 999L) / 1_000L).coerceAtLeast(1)
-        "尝试次数过多。请在 "$seconds seconds."
+        "尝试次数过多。请在 ${seconds} 秒后重试。"
     }
     SupervisedParentAuthResult.Missing -> "尚未设置家长访问权限。"
     SupervisedParentAuthResult.Corrupt -> "家长权限数据不可用，受监督模式保持锁定。"
